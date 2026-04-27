@@ -2,21 +2,36 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MessageCircleHeart, Phone, ShieldCheck, ChevronDown } from "lucide-react";
+import { MessageCircleHeart, Phone, ShieldCheck, ChevronDown, Loader2 } from "lucide-react";
 import { useI18n, countryName } from "@/lib/i18n";
 import { CountryPicker } from "@/components/CountryPicker";
 import { LanguagePicker } from "@/components/LanguagePicker";
+import { useOtpCooldown } from "@/hooks/use-otp-cooldown";
 
 export default function Auth() {
   const navigate = useNavigate();
   const { t, lang, country, setCountry } = useI18n();
   const [phone, setPhone] = useState("");
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [sending, setSending] = useState(false);
 
-  const goOtp = () => {
-    sessionStorage.setItem("sabai_phone", `${country.dial} ${phone}`);
-    navigate("/otp");
+  const fullPhone = `${country.dial} ${phone}`;
+  const cooldown = useOtpCooldown(phone ? fullPhone : null);
+
+  const goOtp = async () => {
+    if (sending || !cooldown.canResend) return;
+    if (!cooldown.trigger()) return; // double-guard against spam
+    setSending(true);
+    sessionStorage.setItem("sabai_phone", fullPhone);
+    // Simulate network round-trip then navigate
+    setTimeout(() => {
+      setSending(false);
+      navigate("/otp");
+    }, 600);
   };
+
+  const phoneTooShort = phone.length < Math.min(8, country.maxLen);
+  const disabled = sending || phoneTooShort || !cooldown.canResend;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -81,11 +96,29 @@ export default function Auth() {
 
           <Button
             onClick={goOtp}
-            disabled={phone.length < Math.min(8, country.maxLen)}
-            className="w-full h-14 rounded-2xl bg-gradient-primary text-base font-semibold shadow-glow hover:opacity-95 transition-smooth"
+            disabled={disabled}
+            aria-busy={sending}
+            className="w-full h-14 rounded-2xl bg-gradient-primary text-base font-semibold shadow-glow hover:opacity-95 transition-smooth disabled:opacity-60"
           >
-            {t("auth.send")}
+            {sending ? (
+              <span className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                {t("otp.sending")}
+              </span>
+            ) : cooldown.locked ? (
+              t("otp.locked")
+            ) : !cooldown.canResend && phone ? (
+              `${t("otp.resendIn")} ${cooldown.remainingSec}s`
+            ) : (
+              t("auth.send")
+            )}
           </Button>
+
+          {cooldown.attempts > 0 && (
+            <p className="text-[11px] text-center text-muted-foreground -mt-2">
+              {t("otp.attempts", { n: cooldown.attempts, m: cooldown.maxAttempts })}
+            </p>
+          )}
 
           <div className="flex items-center gap-3 py-2">
             <div className="h-px bg-border flex-1" />

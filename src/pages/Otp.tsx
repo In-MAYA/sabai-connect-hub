@@ -3,20 +3,20 @@ import { useNavigate } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n";
+import { useOtpCooldown } from "@/hooks/use-otp-cooldown";
+import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function Otp() {
   const navigate = useNavigate();
   const { t } = useI18n();
   const [code, setCode] = useState(["", "", "", "", "", ""]);
-  const [seconds, setSeconds] = useState(45);
+  const [resending, setResending] = useState(false);
   const refs = useRef<(HTMLInputElement | null)[]>([]);
   const phone =
     (typeof window !== "undefined" && sessionStorage.getItem("sabai_phone")) || "+856 20 12 345 678";
 
-  useEffect(() => {
-    const t = setInterval(() => setSeconds((s) => (s > 0 ? s - 1 : 0)), 1000);
-    return () => clearInterval(t);
-  }, []);
+  const cooldown = useOtpCooldown(phone);
 
   const handle = (i: number, v: string) => {
     const ch = v.replace(/\D/g, "").slice(-1);
@@ -27,6 +27,27 @@ export default function Otp() {
   };
 
   const filled = code.every((c) => c.length === 1);
+
+  const onResend = async () => {
+    if (resending || !cooldown.canResend) return;
+    if (!cooldown.trigger()) return;
+    setResending(true);
+    setCode(["", "", "", "", "", ""]);
+    refs.current[0]?.focus();
+    // Simulate sending the code
+    setTimeout(() => setResending(false), 700);
+  };
+
+  // Keep focus management consistent after a resend completes
+  useEffect(() => {
+    if (!resending) return;
+  }, [resending]);
+
+  const onVerify = () => {
+    if (!filled) return;
+    cooldown.reset();
+    navigate("/setup-profile");
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -48,22 +69,48 @@ export default function Otp() {
               }}
               inputMode="numeric"
               maxLength={1}
-              className="h-14 rounded-2xl bg-muted/60 border-2 border-input focus:border-primary focus:bg-card outline-none text-center text-xl font-bold transition-smooth"
+              disabled={resending}
+              className="h-14 rounded-2xl bg-muted/60 border-2 border-input focus:border-primary focus:bg-card outline-none text-center text-xl font-bold transition-smooth disabled:opacity-60"
             />
           ))}
         </div>
 
-        <div className="mt-6 text-center text-sm text-muted-foreground">
-          {seconds > 0 ? (
-            <>{t("otp.resendIn")} <span className="font-semibold text-foreground">{seconds}s</span></>
+        <div className="mt-6 text-center text-sm">
+          {cooldown.locked ? (
+            <p className="text-destructive font-semibold">
+              {t("otp.locked")} <span className="text-foreground">{cooldown.remainingSec}s</span>
+            </p>
+          ) : !cooldown.canResend ? (
+            <p className="text-muted-foreground">
+              {t("otp.resendIn")}{" "}
+              <span className="font-semibold text-foreground tabular-nums">{cooldown.remainingSec}s</span>
+            </p>
           ) : (
-            <button className="text-primary font-semibold" onClick={() => setSeconds(45)}>{t("otp.resend")}</button>
+            <button
+              type="button"
+              onClick={onResend}
+              disabled={resending}
+              aria-busy={resending}
+              className={cn(
+                "inline-flex items-center gap-1.5 font-semibold transition-opacity",
+                resending ? "text-muted-foreground" : "text-primary hover:opacity-80",
+              )}
+            >
+              {resending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+              {resending ? t("otp.sending") : t("otp.resend")}
+            </button>
+          )}
+
+          {cooldown.attempts > 0 && (
+            <p className="text-[11px] text-muted-foreground mt-1.5">
+              {t("otp.attempts", { n: cooldown.attempts, m: cooldown.maxAttempts })}
+            </p>
           )}
         </div>
 
         <Button
-          onClick={() => navigate("/setup-profile")}
-          disabled={!filled}
+          onClick={onVerify}
+          disabled={!filled || resending}
           className="mt-8 w-full h-14 rounded-2xl bg-gradient-primary text-base font-semibold shadow-glow"
         >
           {t("otp.verify")}
