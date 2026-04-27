@@ -165,7 +165,7 @@ const dict: Record<Lang, Dict> = {
 type I18nCtx = {
   lang: Lang;
   setLang: (l: Lang) => void;
-  t: (key: string) => string;
+  t: (key: string, vars?: Record<string, string | number>) => string;
   country: Country;
   setCountry: (c: Country) => void;
 };
@@ -203,7 +203,11 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     () => ({
       lang,
       setLang: setLangState,
-      t: (k: string) => dict[lang][k] ?? dict.en[k] ?? k,
+      t: (k: string, vars?: Record<string, string | number>) => {
+        let s = dict[lang][k] ?? dict.en[k] ?? k;
+        if (vars) for (const [key, val] of Object.entries(vars)) s = s.replaceAll(`{${key}}`, String(val));
+        return s;
+      },
       country,
       setCountry: setCountryState,
     }),
