@@ -205,7 +205,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
       setLang: setLangState,
       t: (k: string, vars?: Record<string, string | number>) => {
         let s = dict[lang][k] ?? dict.en[k] ?? k;
-        if (vars) for (const [key, val] of Object.entries(vars)) s = s.replaceAll(`{${key}}`, String(val));
+        if (vars) for (const [key, val] of Object.entries(vars)) s = s.split(`{${key}}`).join(String(val));
         return s;
       },
       country,
