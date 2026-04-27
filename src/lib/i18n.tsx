@@ -86,6 +86,9 @@ const dict: Record<Lang, Dict> = {
     "otp.sentTo": "ສົ່ງລະຫັດ 6 ຫລັກໄປທີ່",
     "otp.resendIn": "ຂໍລະຫັດໃໝ່ໃນອີກ",
     "otp.resend": "ສົ່ງລະຫັດອີກຄັ້ງ",
+    "otp.sending": "ກຳລັງສົ່ງ...",
+    "otp.locked": "ຂໍລະຫັດເກີນກຳນົດ ກະລຸນາລໍຖ້າ",
+    "otp.attempts": "ສົ່ງແລ້ວ {n}/{m} ຄັ້ງ",
     "otp.verify": "ຢືນຢັນ",
   },
   th: {
@@ -106,6 +109,9 @@ const dict: Record<Lang, Dict> = {
     "otp.sentTo": "ส่งรหัส 6 หลักไปที่",
     "otp.resendIn": "ขอรหัสใหม่ในอีก",
     "otp.resend": "ส่งรหัสอีกครั้ง",
+    "otp.sending": "กำลังส่ง...",
+    "otp.locked": "ขอรหัสเกินกำหนด กรุณารอสักครู่",
+    "otp.attempts": "ส่งแล้ว {n}/{m} ครั้ง",
     "otp.verify": "ยืนยัน",
   },
   en: {
@@ -126,6 +132,9 @@ const dict: Record<Lang, Dict> = {
     "otp.sentTo": "A 6-digit code was sent to",
     "otp.resendIn": "Resend code in",
     "otp.resend": "Resend code",
+    "otp.sending": "Sending...",
+    "otp.locked": "Too many requests — please wait",
+    "otp.attempts": "Sent {n}/{m} times",
     "otp.verify": "Verify",
   },
   zh: {
@@ -146,6 +155,9 @@ const dict: Record<Lang, Dict> = {
     "otp.sentTo": "6 位验证码已发送至",
     "otp.resendIn": "重新发送倒计时",
     "otp.resend": "重新发送",
+    "otp.sending": "发送中...",
+    "otp.locked": "请求次数过多,请稍候",
+    "otp.attempts": "已发送 {n}/{m} 次",
     "otp.verify": "确认",
   },
 };
