@@ -2,12 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/lib/i18n";
 
 export default function Otp() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [seconds, setSeconds] = useState(45);
   const refs = useRef<(HTMLInputElement | null)[]>([]);
+  const phone =
+    (typeof window !== "undefined" && sessionStorage.getItem("sabai_phone")) || "+856 20 12 345 678";
 
   useEffect(() => {
     const t = setInterval(() => setSeconds((s) => (s > 0 ? s - 1 : 0)), 1000);
@@ -26,10 +30,10 @@ export default function Otp() {
 
   return (
     <div className="min-h-screen bg-background">
-      <PageHeader title="ยืนยันตัวตน" back />
+      <PageHeader title={t("otp.title")} back />
       <div className="px-6 pt-4">
         <div className="bg-primary/10 rounded-2xl p-4 text-sm">
-          ส่งรหัส 6 หลักไปที่ <span className="font-semibold text-primary">+66 81 234 5678</span> แล้ว
+          {t("otp.sentTo")} <span className="font-semibold text-primary font-mono">{phone}</span>
         </div>
 
         <div className="mt-8 grid grid-cols-6 gap-2">
@@ -51,9 +55,9 @@ export default function Otp() {
 
         <div className="mt-6 text-center text-sm text-muted-foreground">
           {seconds > 0 ? (
-            <>ขอรหัสใหม่ในอีก <span className="font-semibold text-foreground">{seconds}s</span></>
+            <>{t("otp.resendIn")} <span className="font-semibold text-foreground">{seconds}s</span></>
           ) : (
-            <button className="text-primary font-semibold" onClick={() => setSeconds(45)}>ส่งรหัสอีกครั้ง</button>
+            <button className="text-primary font-semibold" onClick={() => setSeconds(45)}>{t("otp.resend")}</button>
           )}
         </div>
 
@@ -62,7 +66,7 @@ export default function Otp() {
           disabled={!filled}
           className="mt-8 w-full h-14 rounded-2xl bg-gradient-primary text-base font-semibold shadow-glow"
         >
-          ยืนยัน
+          {t("otp.verify")}
         </Button>
       </div>
     </div>
