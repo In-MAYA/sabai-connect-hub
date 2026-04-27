@@ -20,12 +20,19 @@ export type Chat = {
   pinned?: boolean;
 };
 
+export type Attachment =
+  | { kind: "image"; url: string; name?: string; size?: number }
+  | { kind: "video"; url: string; poster?: string; name?: string; size?: number; duration?: string }
+  | { kind: "file"; url?: string; name: string; size?: number; mime?: string };
+
 export type Message = {
   id: string;
   senderId: string;
   text?: string;
   image?: string;
   voice?: { duration: string };
+  attachment?: Attachment;
+  uploadProgress?: number; // 0-100, undefined = done
   time: string;
   status?: "sent" | "delivered" | "read";
 };
