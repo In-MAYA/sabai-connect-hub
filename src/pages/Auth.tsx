@@ -142,6 +142,8 @@ export default function Auth() {
               t("otp.locked")
             ) : !cooldown.canResend && phone ? (
               `${t("otp.resendIn")} ${cooldown.remainingSec}s`
+            ) : sendError ? (
+              t("otp.error.retry")
             ) : (
               t("auth.send")
             )}
