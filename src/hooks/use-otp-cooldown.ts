@@ -165,6 +165,8 @@ export function useOtpCooldown(phone?: string | null) {
     maxAttempts: MAX_ATTEMPTS,
     /** Call before issuing a resend — returns false if blocked. */
     trigger,
+    /** Revert the most recent trigger() — call when the send request fails. */
+    rollback,
     /** Clear cooldown state (e.g. after successful verification). */
     reset,
   };
