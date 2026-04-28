@@ -1,8 +1,9 @@
 import { PageHeader } from "@/components/PageHeader";
 import { Avatar } from "@/components/Avatar";
-import { notifications } from "@/lib/mock-data";
+import { notifications as rawNotifications } from "@/lib/mock-data";
 import { Heart, MessageCircle, UserPlus, ShoppingBag, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n";
 
 const iconMap = {
   like: { Icon: Heart, color: "bg-destructive/15 text-destructive" },
@@ -12,31 +13,58 @@ const iconMap = {
   message: { Icon: Mail, color: "bg-accent/15 text-accent" },
 };
 
-const tabs = ["ทั้งหมด", "ไลก์", "คอมเมนต์", "ติดตาม", "คำสั่งซื้อ"];
+// Map notification id -> i18n key for text + time
+const textKeyById: Record<string, string> = {
+  n1: "notif.text.like",
+  n2: "notif.text.comment",
+  n3: "notif.text.follow",
+  n4: "notif.text.order",
+  n5: "notif.text.message",
+  n6: "notif.text.likeMore",
+};
+const timeById: Record<string, { key: string; n?: number }> = {
+  n1: { key: "notif.time.minAgo", n: 2 },
+  n2: { key: "notif.time.minAgo", n: 15 },
+  n3: { key: "notif.time.hourAgo", n: 1 },
+  n4: { key: "notif.time.hourAgo", n: 3 },
+  n5: { key: "notif.time.yesterday" },
+  n6: { key: "notif.time.yesterday" },
+};
 
 export default function Notifications() {
+  const { t } = useI18n();
+  const tabs = [
+    t("notif.tab.all"),
+    t("notif.tab.likes"),
+    t("notif.tab.comments"),
+    t("notif.tab.follows"),
+    t("notif.tab.orders"),
+  ];
   return (
     <div>
-      <PageHeader title="แจ้งเตือน" large />
+      <PageHeader title={t("notif.title")} large />
       <div className="px-4 pt-1 overflow-x-auto no-scrollbar">
         <div className="flex gap-2 pb-3">
-          {tabs.map((t, i) => (
+          {tabs.map((tab, i) => (
             <button
-              key={t}
+              key={tab}
               className={cn(
                 "shrink-0 h-8 px-3.5 rounded-full text-xs font-semibold transition-smooth",
                 i === 0 ? "bg-gradient-primary text-primary-foreground shadow-soft" : "bg-muted text-foreground",
               )}
             >
-              {t}
+              {tab}
             </button>
           ))}
         </div>
       </div>
 
       <div className="px-2">
-        {notifications.map((n) => {
+        {rawNotifications.map((n) => {
           const { Icon, color } = iconMap[n.type];
+          const text = textKeyById[n.id] ? t(textKeyById[n.id]) : n.text;
+          const tEntry = timeById[n.id];
+          const time = tEntry ? t(tEntry.key, tEntry.n !== undefined ? { n: tEntry.n } : undefined) : n.time;
           return (
             <div
               key={n.id}
@@ -54,12 +82,12 @@ export default function Notifications() {
               <div className="flex-1 min-w-0">
                 <p className="text-sm leading-snug">
                   <span className="font-semibold">{n.user.name}</span>{" "}
-                  <span className="text-muted-foreground">{n.text}</span>
+                  <span className="text-muted-foreground">{text}</span>
                 </p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">{n.time}</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">{time}</p>
               </div>
               {n.type === "follow" && (
-                <button className="h-8 px-3 rounded-full bg-gradient-primary text-primary-foreground text-xs font-bold shadow-soft">ติดตามกลับ</button>
+                <button className="h-8 px-3 rounded-full bg-gradient-primary text-primary-foreground text-xs font-bold shadow-soft">{t("notif.followBack")}</button>
               )}
               {!n.read && <span className="h-2 w-2 rounded-full bg-primary" />}
             </div>
