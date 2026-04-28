@@ -1,16 +1,17 @@
 import { NavLink } from "@/components/NavLink";
 import { MessageCircle, Compass, ShoppingBag, Bell, User } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const tabs = [
-  { to: "/chats", icon: MessageCircle, label: "แชท", badge: 8 },
-  { to: "/feed", icon: Compass, label: "ฟีด" },
-  { to: "/shop", icon: ShoppingBag, label: "ร้านค้า" },
-  { to: "/notifications", icon: Bell, label: "แจ้งเตือน", badge: 4 },
-  { to: "/profile", icon: User, label: "ฉัน" },
-];
+import { useI18n } from "@/lib/i18n";
 
 export function BottomNav() {
+  const { t } = useI18n();
+  const tabs = [
+    { to: "/chats", icon: MessageCircle, label: t("nav.chats"), badge: 8 },
+    { to: "/feed", icon: Compass, label: t("nav.feed") },
+    { to: "/shop", icon: ShoppingBag, label: t("nav.shop") },
+    { to: "/notifications", icon: Bell, label: t("nav.notifications"), badge: 4 },
+    { to: "/profile", icon: User, label: t("nav.profile") },
+  ];
   return (
     <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[440px] z-40 safe-bottom">
       <div className="mx-3 mb-2 rounded-3xl bg-card/95 backdrop-blur-xl border border-border shadow-floating">
