@@ -114,6 +114,19 @@ export default function Auth() {
             </div>
           </div>
 
+          {sendError && (
+            <div
+              role="alert"
+              className="flex items-start gap-2.5 rounded-2xl border border-destructive/30 bg-destructive/10 p-3 animate-slide-up"
+            >
+              <AlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-destructive">{t("otp.error.title")}</p>
+                <p className="text-xs text-destructive/90 mt-0.5">{sendError}</p>
+              </div>
+            </div>
+          )}
+
           <Button
             onClick={goOtp}
             disabled={disabled}
