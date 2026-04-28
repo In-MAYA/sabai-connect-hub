@@ -2,11 +2,24 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MessageCircleHeart, Phone, ShieldCheck, ChevronDown, Loader2 } from "lucide-react";
+import { MessageCircleHeart, Phone, ShieldCheck, ChevronDown, Loader2, AlertCircle } from "lucide-react";
 import { useI18n, countryName } from "@/lib/i18n";
 import { CountryPicker } from "@/components/CountryPicker";
 import { LanguagePicker } from "@/components/LanguagePicker";
 import { useOtpCooldown } from "@/hooks/use-otp-cooldown";
+
+// Simulate sending an OTP. ~15% of attempts fail to demonstrate the
+// error-handling + cooldown rollback flow until a real SMS provider is wired.
+const sendOtp = (phone: string) =>
+  new Promise<void>((resolve, reject) => {
+    setTimeout(() => {
+      if (!phone || Math.random() < 0.15) {
+        reject(new Error("network"));
+      } else {
+        resolve();
+      }
+    }, 600);
+  });
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -14,6 +27,7 @@ export default function Auth() {
   const [phone, setPhone] = useState("");
   const [pickerOpen, setPickerOpen] = useState(false);
   const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
 
   const fullPhone = `${country.dial} ${phone}`;
   const cooldown = useOtpCooldown(phone ? fullPhone : null);
@@ -22,12 +36,18 @@ export default function Auth() {
     if (sending || !cooldown.canResend) return;
     if (!cooldown.trigger()) return; // double-guard against spam
     setSending(true);
-    sessionStorage.setItem("sabai_phone", fullPhone);
-    // Simulate network round-trip then navigate
-    setTimeout(() => {
+    setSendError(null);
+    try {
+      await sendOtp(fullPhone);
+      sessionStorage.setItem("sabai_phone", fullPhone);
       setSending(false);
       navigate("/otp");
-    }, 600);
+    } catch {
+      // Refund the attempt so a failed delivery doesn't punish the user
+      cooldown.rollback();
+      setSending(false);
+      setSendError(t("otp.error.network"));
+    }
   };
 
   const phoneTooShort = phone.length < Math.min(8, country.maxLen);
