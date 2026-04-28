@@ -4,10 +4,19 @@ import { products } from "@/lib/mock-data";
 import { Search, ShoppingCart, Heart, Star, Flame } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-
-const categories = ["ทั้งหมด", "🔥 ฮอต", "👕 แฟชั่น", "📱 อิเล็ก", "🍰 ของกิน", "✈️ ท่องเที่ยว", "💎 ของสะสม"];
+import { useI18n } from "@/lib/i18n";
 
 export default function Shop() {
+  const { t } = useI18n();
+  const categories = [
+    t("shop.cat.all"),
+    t("shop.cat.hot"),
+    t("shop.cat.fashion"),
+    t("shop.cat.electronics"),
+    t("shop.cat.food"),
+    t("shop.cat.travel"),
+    t("shop.cat.collect"),
+  ];
   return (
     <div>
       <PageHeader
