@@ -100,10 +100,18 @@ export function useOtpCooldown(phone?: string | null) {
   const canResend = remainingMs <= 0 && !locked;
 
   /**
-   * Mark a resend as triggered. Returns true when it was allowed and the
-   * cooldown was advanced; false when it was blocked (still cooling down or
-   * locked out). Components should always call this BEFORE issuing the
-   * actual resend request to prevent spam.
+   * Snapshot of the previous state, captured by `trigger()` so the caller
+   * can `rollback()` if the actual send request fails. Without this, a
+   * failed send would consume an attempt and start the cooldown timer.
+   */
+  const prevRef = useRef<Stored | null>(null);
+
+  /**
+   * Optimistically advance the cooldown for a resend attempt. Returns true
+   * when the action was allowed (cooldown advanced); false when blocked
+   * (still cooling down or locked out). Always call BEFORE issuing the
+   * actual resend request to prevent spam, and call `rollback()` if the
+   * request ultimately fails so the user isn't punished.
    */
   const trigger = useCallback((): boolean => {
     const current = read(phone);
@@ -119,10 +127,24 @@ export function useOtpCooldown(phone?: string | null) {
       nextAt: t + nextDelay,
       windowStart: current.windowStart || t,
     };
+    prevRef.current = current;
     write(phone, next);
     setState(next);
     setNow(t);
     return true;
+  }, [phone]);
+
+  /**
+   * Revert the most recent `trigger()` — use when the OTP send request
+   * fails so the cooldown isn't consumed by a failed delivery.
+   */
+  const rollback = useCallback(() => {
+    const prev = prevRef.current;
+    if (!prev) return;
+    prevRef.current = null;
+    write(phone, prev);
+    setState(prev);
+    setNow(Date.now());
   }, [phone]);
 
   const reset = useCallback(() => {
@@ -143,6 +165,8 @@ export function useOtpCooldown(phone?: string | null) {
     maxAttempts: MAX_ATTEMPTS,
     /** Call before issuing a resend — returns false if blocked. */
     trigger,
+    /** Revert the most recent trigger() — call when the send request fails. */
+    rollback,
     /** Clear cooldown state (e.g. after successful verification). */
     reset,
   };
