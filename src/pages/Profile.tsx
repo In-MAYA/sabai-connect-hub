@@ -1,16 +1,15 @@
 import { PageHeader } from "@/components/PageHeader";
 import { Avatar } from "@/components/Avatar";
 import { currentUser, posts, products } from "@/lib/mock-data";
-import { Settings, QrCode, Edit3, BadgeCheck, Grid3x3, Store, Bookmark, Wallet, Gift, Moon, Sun, ChevronRight } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Settings, QrCode, Edit3, BadgeCheck, Grid3x3, Store, Bookmark, Wallet, Gift } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useI18n } from "@/lib/i18n";
 
 export default function Profile() {
+  const navigate = useNavigate();
+  const { t } = useI18n();
   const [tab, setTab] = useState<"posts" | "shop" | "saved">("posts");
-  const [dark, setDark] = useState(false);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", dark);
-  }, [dark]);
 
   const myPosts = posts.slice(0, 3);
   const myProducts = products.slice(0, 4);
@@ -21,17 +20,14 @@ export default function Profile() {
         title="โปรไฟล์"
         right={
           <>
-            <button
-              onClick={() => setDark((d) => !d)}
-              className="h-10 w-10 rounded-full hover:bg-muted flex items-center justify-center"
-              aria-label="toggle theme"
-            >
-              {dark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </button>
             <button className="h-10 w-10 rounded-full hover:bg-muted flex items-center justify-center">
               <QrCode className="h-5 w-5" />
             </button>
-            <button className="h-10 w-10 rounded-full hover:bg-muted flex items-center justify-center">
+            <button
+              onClick={() => navigate("/settings")}
+              aria-label={t("settings.title")}
+              className="h-10 w-10 rounded-full hover:bg-muted flex items-center justify-center"
+            >
               <Settings className="h-5 w-5" />
             </button>
           </>
@@ -47,7 +43,10 @@ export default function Profile() {
               <Avatar name={currentUser.name} gradient={currentUser.avatar} size="2xl" />
             </div>
             <div className="flex-1 pb-2 flex justify-end gap-2">
-              <button className="h-9 px-4 rounded-full bg-muted text-sm font-semibold flex items-center gap-1.5">
+              <button
+                onClick={() => navigate("/setup-profile")}
+                className="h-9 px-4 rounded-full bg-muted text-sm font-semibold flex items-center gap-1.5"
+              >
                 <Edit3 className="h-3.5 w-3.5" /> แก้ไข
               </button>
             </div>
@@ -135,20 +134,20 @@ export default function Profile() {
       )}
 
       {tab === "saved" && (
-        <div className="px-4 pt-8 text-center">
+        <div className="px-4 pt-8 text-center pb-10">
           <Bookmark className="h-10 w-10 mx-auto text-muted-foreground/50" />
           <p className="text-sm text-muted-foreground mt-2">ยังไม่มีรายการที่บันทึก</p>
         </div>
       )}
 
-      {/* Settings list */}
-      <div className="px-4 mt-6 space-y-1">
-        {["บัญชีและความปลอดภัย", "การแจ้งเตือน", "ความเป็นส่วนตัว", "ภาษา", "ช่วยเหลือ"].map((s) => (
-          <button key={s} className="w-full flex items-center justify-between py-3.5 px-1 text-left">
-            <span className="text-sm font-medium">{s}</span>
-            <ChevronRight className="h-4 w-4 text-muted-foreground" />
-          </button>
-        ))}
+      {/* Open settings shortcut */}
+      <div className="px-4 mt-6 mb-8">
+        <button
+          onClick={() => navigate("/settings")}
+          className="w-full flex items-center justify-center gap-2 h-12 rounded-2xl bg-muted/60 hover:bg-muted text-sm font-semibold transition-smooth"
+        >
+          <Settings className="h-4 w-4" /> {t("settings.title")}
+        </button>
       </div>
     </div>
   );
