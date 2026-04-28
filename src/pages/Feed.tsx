@@ -3,6 +3,7 @@ import { Avatar } from "@/components/Avatar";
 import { posts } from "@/lib/mock-data";
 import { Heart, MessageCircle, Share2, Music2, Search, Plus, Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n";
 
 function formatN(n: number) {
   if (n >= 1000) return (n / 1000).toFixed(1).replace(".0", "") + "K";
@@ -10,6 +11,7 @@ function formatN(n: number) {
 }
 
 export default function Feed() {
+  const { t } = useI18n();
   const [liked, setLiked] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(posts.map((p) => [p.id, !!p.liked])),
   );
@@ -23,9 +25,9 @@ export default function Feed() {
             <Search className="h-5 w-5" />
           </button>
           <div className="flex items-center gap-5 text-white">
-            <button className="text-sm font-semibold opacity-60">ติดตาม</button>
-            <button className="text-base font-bold">สำหรับคุณ</button>
-            <button className="text-sm font-semibold opacity-60">สด</button>
+            <button className="text-sm font-semibold opacity-60">{t("feed.following")}</button>
+            <button className="text-base font-bold">{t("feed.foryou")}</button>
+            <button className="text-sm font-semibold opacity-60">{t("feed.live")}</button>
           </div>
           <button className="h-10 w-10 rounded-full bg-gradient-primary text-primary-foreground flex items-center justify-center shadow-glow">
             <Plus className="h-5 w-5" />
@@ -67,7 +69,7 @@ export default function Feed() {
                 <div className="h-12 w-12 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center">
                   <Bookmark className="h-6 w-6" />
                 </div>
-                <span className="text-xs font-bold drop-shadow">บันทึก</span>
+                <span className="text-xs font-bold drop-shadow">{t("feed.save")}</span>
               </button>
 
               <button className="flex flex-col items-center gap-1 text-white">
@@ -87,7 +89,7 @@ export default function Feed() {
               <div className="flex items-center gap-2">
                 <h3 className="font-bold text-base drop-shadow">{p.user.username}</h3>
                 {p.user.verified && <span className="h-4 w-4 rounded-full bg-primary text-primary-foreground text-[9px] font-bold flex items-center justify-center">✓</span>}
-                <button className="ml-1 h-7 px-3 rounded-full border border-white/80 text-xs font-semibold backdrop-blur-md">ติดตาม</button>
+                <button className="ml-1 h-7 px-3 rounded-full border border-white/80 text-xs font-semibold backdrop-blur-md">{t("feed.follow")}</button>
               </div>
               <p className="mt-2 text-sm leading-snug drop-shadow">{p.caption}</p>
               <div className="mt-2 flex items-center gap-1.5 text-xs">
