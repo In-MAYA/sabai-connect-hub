@@ -89,6 +89,9 @@ const dict: Record<Lang, Dict> = {
     "otp.sending": "ກຳລັງສົ່ງ...",
     "otp.locked": "ຂໍລະຫັດເກີນກຳນົດ ກະລຸນາລໍຖ້າ",
     "otp.attempts": "ສົ່ງແລ້ວ {n}/{m} ຄັ້ງ",
+    "otp.error.title": "ສົ່ງລະຫັດ OTP ບໍ່ສຳເລັດ",
+    "otp.error.network": "ການເຊື່ອມຕໍ່ມີບັນຫາ ກະລຸນາກວດສອບອິນເຕີເນັດ ແລ້ວລອງໃໝ່",
+    "otp.error.retry": "ລອງໃໝ່",
     "otp.verify": "ຢືນຢັນ",
   },
   th: {
@@ -112,6 +115,9 @@ const dict: Record<Lang, Dict> = {
     "otp.sending": "กำลังส่ง...",
     "otp.locked": "ขอรหัสเกินกำหนด กรุณารอสักครู่",
     "otp.attempts": "ส่งแล้ว {n}/{m} ครั้ง",
+    "otp.error.title": "ส่งรหัส OTP ไม่สำเร็จ",
+    "otp.error.network": "การเชื่อมต่อมีปัญหา กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองใหม่",
+    "otp.error.retry": "ลองใหม่",
     "otp.verify": "ยืนยัน",
   },
   en: {
@@ -135,6 +141,9 @@ const dict: Record<Lang, Dict> = {
     "otp.sending": "Sending...",
     "otp.locked": "Too many requests — please wait",
     "otp.attempts": "Sent {n}/{m} times",
+    "otp.error.title": "Couldn't send OTP",
+    "otp.error.network": "Connection problem — check your internet and try again",
+    "otp.error.retry": "Try again",
     "otp.verify": "Verify",
   },
   zh: {
@@ -158,6 +167,9 @@ const dict: Record<Lang, Dict> = {
     "otp.sending": "发送中...",
     "otp.locked": "请求次数过多,请稍候",
     "otp.attempts": "已发送 {n}/{m} 次",
+    "otp.error.title": "验证码发送失败",
+    "otp.error.network": "网络连接出现问题,请检查后重试",
+    "otp.error.retry": "重试",
     "otp.verify": "确认",
   },
 };
