@@ -4,14 +4,23 @@ import { products } from "@/lib/mock-data";
 import { Search, ShoppingCart, Heart, Star, Flame } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-
-const categories = ["ทั้งหมด", "🔥 ฮอต", "👕 แฟชั่น", "📱 อิเล็ก", "🍰 ของกิน", "✈️ ท่องเที่ยว", "💎 ของสะสม"];
+import { useI18n } from "@/lib/i18n";
 
 export default function Shop() {
+  const { t } = useI18n();
+  const categories = [
+    t("shop.cat.all"),
+    t("shop.cat.hot"),
+    t("shop.cat.fashion"),
+    t("shop.cat.electronics"),
+    t("shop.cat.food"),
+    t("shop.cat.travel"),
+    t("shop.cat.collect"),
+  ];
   return (
     <div>
       <PageHeader
-        title="ร้านค้า"
+        title={t("shop.title")}
         large
         right={
           <Link to="/cart" className="relative h-10 w-10 rounded-full bg-gradient-primary text-primary-foreground flex items-center justify-center shadow-glow">
@@ -25,7 +34,7 @@ export default function Shop() {
       <div className="px-4 pt-2">
         <div className="flex items-center gap-2 h-11 rounded-2xl bg-muted/70 px-3">
           <Search className="h-4 w-4 text-muted-foreground" />
-          <Input placeholder="ค้นหาสินค้า, ร้านค้า..." className="border-0 bg-transparent p-0 h-auto focus-visible:ring-0 text-sm" />
+          <Input placeholder={t("shop.searchPlaceholder")} className="border-0 bg-transparent p-0 h-auto focus-visible:ring-0 text-sm" />
         </div>
       </div>
 
@@ -53,8 +62,8 @@ export default function Shop() {
             <div className="inline-flex items-center gap-1 bg-white/20 backdrop-blur-md rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider">
               <Flame className="h-3 w-3" /> Flash Sale
             </div>
-            <h2 className="font-display text-2xl font-extrabold mt-2 leading-tight">ลดสูงสุด 70%<br/>เฉพาะวันนี้!</h2>
-            <p className="text-xs opacity-90 mt-1">เหลือเวลา 04 : 23 : 51</p>
+            <h2 className="font-display text-2xl font-extrabold mt-2 leading-tight">{t("shop.flashSale")}<br/>{t("shop.flashSaleSub")}</h2>
+            <p className="text-xs opacity-90 mt-1">{t("shop.timeLeft")} 04 : 23 : 51</p>
           </div>
         </div>
       </div>
@@ -85,7 +94,7 @@ export default function Shop() {
                   <Star className="h-3 w-3 fill-warning text-warning" />
                   <span className="font-semibold text-foreground">{p.rating}</span>
                 </span>
-                <span>ขายแล้ว {p.sold > 1000 ? `${(p.sold / 1000).toFixed(1)}K` : p.sold}</span>
+                <span>{t("shop.sold")} {p.sold > 1000 ? `${(p.sold / 1000).toFixed(1)}K` : p.sold}</span>
               </div>
             </div>
           </Link>

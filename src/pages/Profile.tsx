@@ -17,7 +17,7 @@ export default function Profile() {
   return (
     <div>
       <PageHeader
-        title="โปรไฟล์"
+        title={t("profile.title")}
         right={
           <>
             <button className="h-10 w-10 rounded-full hover:bg-muted flex items-center justify-center">
@@ -47,7 +47,7 @@ export default function Profile() {
                 onClick={() => navigate("/setup-profile")}
                 className="h-9 px-4 rounded-full bg-muted text-sm font-semibold flex items-center gap-1.5"
               >
-                <Edit3 className="h-3.5 w-3.5" /> แก้ไข
+                <Edit3 className="h-3.5 w-3.5" /> {t("profile.edit")}
               </button>
             </div>
           </div>
@@ -57,12 +57,12 @@ export default function Profile() {
               {currentUser.verified && <BadgeCheck className="h-5 w-5 text-primary fill-primary text-background" />}
             </div>
             <p className="text-sm text-muted-foreground">{currentUser.username}</p>
-            <p className="text-sm mt-2 leading-snug">✨ ใช้ชีวิตให้สบายๆ · รักทะเล กาแฟ และโค้ด 💙</p>
+            <p className="text-sm mt-2 leading-snug">{t("profile.bio")}</p>
 
             <div className="mt-4 flex items-center gap-6">
-              <div><span className="font-display font-bold text-base">128</span> <span className="text-xs text-muted-foreground">โพสต์</span></div>
-              <div><span className="font-display font-bold text-base">12.4K</span> <span className="text-xs text-muted-foreground">ผู้ติดตาม</span></div>
-              <div><span className="font-display font-bold text-base">340</span> <span className="text-xs text-muted-foreground">กำลังติดตาม</span></div>
+              <div><span className="font-display font-bold text-base">128</span> <span className="text-xs text-muted-foreground">{t("profile.posts")}</span></div>
+              <div><span className="font-display font-bold text-base">12.4K</span> <span className="text-xs text-muted-foreground">{t("profile.followers")}</span></div>
+              <div><span className="font-display font-bold text-base">340</span> <span className="text-xs text-muted-foreground">{t("profile.following")}</span></div>
             </div>
           </div>
         </div>
@@ -71,10 +71,10 @@ export default function Profile() {
       {/* Quick actions */}
       <div className="px-4 mt-5 grid grid-cols-4 gap-2">
         {[
-          { icon: Wallet, label: "กระเป๋า" },
-          { icon: Store, label: "ร้านของฉัน" },
-          { icon: Gift, label: "ของรางวัล" },
-          { icon: Bookmark, label: "บันทึก" },
+          { icon: Wallet, label: t("profile.wallet") },
+          { icon: Store, label: t("profile.myShop") },
+          { icon: Gift, label: t("profile.rewards") },
+          { icon: Bookmark, label: t("profile.saved") },
         ].map(({ icon: Icon, label }) => (
           <button key={label} className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-muted/50 hover:bg-muted transition-smooth">
             <div className="h-10 w-10 rounded-2xl bg-gradient-primary text-primary-foreground flex items-center justify-center shadow-soft">
@@ -89,9 +89,9 @@ export default function Profile() {
       <div className="px-4 mt-6 border-b border-border">
         <div className="grid grid-cols-3">
           {[
-            { key: "posts", icon: Grid3x3, label: "โพสต์" },
-            { key: "shop", icon: Store, label: "สินค้า" },
-            { key: "saved", icon: Bookmark, label: "บันทึก" },
+            { key: "posts", icon: Grid3x3, label: t("profile.tab.posts") },
+            { key: "shop", icon: Store, label: t("profile.tab.shop") },
+            { key: "saved", icon: Bookmark, label: t("profile.tab.saved") },
           ].map(({ key, icon: Icon, label }) => (
             <button
               key={key}
@@ -136,7 +136,7 @@ export default function Profile() {
       {tab === "saved" && (
         <div className="px-4 pt-8 text-center pb-10">
           <Bookmark className="h-10 w-10 mx-auto text-muted-foreground/50" />
-          <p className="text-sm text-muted-foreground mt-2">ยังไม่มีรายการที่บันทึก</p>
+          <p className="text-sm text-muted-foreground mt-2">{t("profile.empty.saved")}</p>
         </div>
       )}
 

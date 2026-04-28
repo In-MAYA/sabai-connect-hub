@@ -2,8 +2,10 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { products } from "@/lib/mock-data";
 import { Avatar } from "@/components/Avatar";
 import { ChevronLeft, Heart, Share2, Star, MessageCircle, ShoppingCart, Store, Truck, ShieldCheck } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 export default function ProductDetail() {
+  const { t } = useI18n();
   const { id } = useParams();
   const navigate = useNavigate();
   const product = products.find((p) => p.id === id) ?? products[0];
@@ -51,7 +53,7 @@ export default function ProductDetail() {
             <Star className="h-4 w-4 fill-warning text-warning" />
             <span className="font-semibold">{product.rating}</span>
           </span>
-          <span className="text-muted-foreground">ขายแล้ว {product.sold.toLocaleString()} ชิ้น</span>
+          <span className="text-muted-foreground">{t("product.soldUnits", { n: product.sold.toLocaleString() })}</span>
         </div>
       </div>
 
@@ -63,9 +65,9 @@ export default function ProductDetail() {
             <h3 className="font-semibold truncate">{product.shop}</h3>
             <span className="h-4 w-4 rounded-full bg-primary text-primary-foreground text-[9px] font-bold flex items-center justify-center">✓</span>
           </div>
-          <p className="text-xs text-muted-foreground flex items-center gap-1"><Store className="h-3 w-3" /> ร้านยอดนิยม · ตอบเร็ว</p>
+          <p className="text-xs text-muted-foreground flex items-center gap-1"><Store className="h-3 w-3" /> {t("product.popularShop")}</p>
         </div>
-        <button className="h-9 px-4 rounded-full border-2 border-primary text-primary text-xs font-bold">เยี่ยมร้าน</button>
+        <button className="h-9 px-4 rounded-full border-2 border-primary text-primary text-xs font-bold">{t("product.visitShop")}</button>
       </div>
 
       {/* Benefits */}
@@ -73,25 +75,24 @@ export default function ProductDetail() {
         <div className="rounded-2xl bg-primary/5 p-3 flex items-center gap-2">
           <div className="h-9 w-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center"><Truck className="h-4 w-4" /></div>
           <div>
-            <p className="text-xs font-semibold">ส่งฟรี</p>
-            <p className="text-[10px] text-muted-foreground">2-3 วัน</p>
+            <p className="text-xs font-semibold">{t("product.freeShipping")}</p>
+            <p className="text-[10px] text-muted-foreground">{t("product.shipDays")}</p>
           </div>
         </div>
         <div className="rounded-2xl bg-primary/5 p-3 flex items-center gap-2">
           <div className="h-9 w-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center"><ShieldCheck className="h-4 w-4" /></div>
           <div>
-            <p className="text-xs font-semibold">รับประกัน</p>
-            <p className="text-[10px] text-muted-foreground">คืนใน 7 วัน</p>
+            <p className="text-xs font-semibold">{t("product.warranty")}</p>
+            <p className="text-[10px] text-muted-foreground">{t("product.return7")}</p>
           </div>
         </div>
       </div>
 
       {/* Description */}
       <div className="px-5 mt-6">
-        <h3 className="font-display font-bold text-base">รายละเอียดสินค้า</h3>
+        <h3 className="font-display font-bold text-base">{t("product.description")}</h3>
         <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-          สินค้าคุณภาพพรีเมียม ดีไซน์โทนสีฟ้าสบายตา เหมาะกับการใช้งานทุกวัน
-          วัสดุคัดสรรอย่างดี ผลิตด้วยมาตรฐานสูง พร้อมจัดส่งทั่วประเทศ 🚚
+          {t("product.descBody")}
         </p>
       </div>
 
@@ -100,17 +101,17 @@ export default function ProductDetail() {
         <div className="flex items-center gap-2">
           <button className="flex flex-col items-center gap-0.5 px-2">
             <Heart className="h-6 w-6" />
-            <span className="text-[10px] font-semibold">ถูกใจ</span>
+            <span className="text-[10px] font-semibold">{t("product.like")}</span>
           </button>
           <button className="flex flex-col items-center gap-0.5 px-2">
             <MessageCircle className="h-6 w-6" />
-            <span className="text-[10px] font-semibold">แชท</span>
+            <span className="text-[10px] font-semibold">{t("product.chat")}</span>
           </button>
           <button className="flex-1 h-12 rounded-2xl border-2 border-primary text-primary font-bold text-sm">
-            เพิ่มลงตะกร้า
+            {t("product.addCart")}
           </button>
           <button className="flex-1 h-12 rounded-2xl bg-gradient-primary text-primary-foreground font-bold text-sm shadow-glow">
-            ซื้อเลย
+            {t("product.buyNow")}
           </button>
         </div>
       </div>

@@ -4,6 +4,7 @@ import { products } from "@/lib/mock-data";
 import { Avatar } from "@/components/Avatar";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/lib/i18n";
 
 const initial = [
   { ...products[0], qty: 1, selected: true },
@@ -12,6 +13,7 @@ const initial = [
 ];
 
 export default function Cart() {
+  const { t } = useI18n();
   const [items, setItems] = useState(initial);
   const total = items.filter((i) => i.selected).reduce((s, i) => s + i.price * i.qty, 0);
 
@@ -20,7 +22,7 @@ export default function Cart() {
 
   return (
     <div>
-      <PageHeader title="ตะกร้าของฉัน" back subtitle={`${items.length} รายการ`} />
+      <PageHeader title={t("cart.title")} back subtitle={t("cart.items", { n: items.length })} />
 
       <div className="px-4 pt-3 space-y-3 pb-32">
         {items.map((it) => (
@@ -68,11 +70,11 @@ export default function Cart() {
 
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[440px] bg-background/95 backdrop-blur-xl border-t border-border px-4 py-3 safe-bottom z-40">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-muted-foreground">รวมทั้งหมด</span>
+          <span className="text-sm text-muted-foreground">{t("cart.total")}</span>
           <span className="font-display text-2xl font-extrabold text-primary">฿{total.toLocaleString()}</span>
         </div>
         <Button className="w-full h-12 rounded-2xl bg-gradient-primary text-base font-semibold shadow-glow">
-          สั่งซื้อ ({items.filter((i) => i.selected).length})
+          {t("cart.checkout")} ({items.filter((i) => i.selected).length})
         </Button>
       </div>
     </div>

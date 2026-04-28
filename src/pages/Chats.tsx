@@ -4,8 +4,10 @@ import { Avatar } from "@/components/Avatar";
 import { chats, stories } from "@/lib/mock-data";
 import { Search, Edit3, Pin, CheckCheck, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useI18n } from "@/lib/i18n";
 
 export default function Chats() {
+  const { t } = useI18n();
   return (
     <div>
       <PageHeader
@@ -27,7 +29,7 @@ export default function Chats() {
       <div className="px-4 pt-2">
         <div className="flex items-center gap-2 h-11 rounded-2xl bg-muted/70 px-3">
           <Search className="h-4 w-4 text-muted-foreground" />
-          <Input placeholder="ค้นหาเพื่อน, แชท, ข้อความ..." className="border-0 bg-transparent p-0 h-auto focus-visible:ring-0 text-sm" />
+          <Input placeholder={t("chats.searchPlaceholder")} className="border-0 bg-transparent p-0 h-auto focus-visible:ring-0 text-sm" />
         </div>
       </div>
 
@@ -53,7 +55,7 @@ export default function Chats() {
                 )}
               </div>
               <span className="text-[11px] font-medium truncate w-full text-center">
-                {s.isYou ? "ของคุณ" : s.user.name.split(" ")[0]}
+                {s.isYou ? t("chats.yourStory") : s.user.name.split(" ")[0]}
               </span>
             </div>
           ))}
