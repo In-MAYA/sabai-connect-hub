@@ -4,14 +4,24 @@ import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n";
 import { useOtpCooldown } from "@/hooks/use-otp-cooldown";
-import { Loader2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+// Mock resend — fails ~15% of the time so we can demo error + rollback.
+const resendOtp = (phone: string) =>
+  new Promise<void>((resolve, reject) => {
+    setTimeout(() => {
+      if (!phone || Math.random() < 0.15) reject(new Error("network"));
+      else resolve();
+    }, 700);
+  });
 
 export default function Otp() {
   const navigate = useNavigate();
   const { t } = useI18n();
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [resending, setResending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
   const refs = useRef<(HTMLInputElement | null)[]>([]);
   const phone =
     (typeof window !== "undefined" && sessionStorage.getItem("sabai_phone")) || "+856 20 12 345 678";
@@ -32,10 +42,18 @@ export default function Otp() {
     if (resending || !cooldown.canResend) return;
     if (!cooldown.trigger()) return;
     setResending(true);
+    setSendError(null);
     setCode(["", "", "", "", "", ""]);
     refs.current[0]?.focus();
-    // Simulate sending the code
-    setTimeout(() => setResending(false), 700);
+    try {
+      await resendOtp(phone);
+      setResending(false);
+    } catch {
+      // Refund the attempt — failed delivery shouldn't burn the cooldown
+      cooldown.rollback();
+      setResending(false);
+      setSendError(t("otp.error.network"));
+    }
   };
 
   // Keep focus management consistent after a resend completes
