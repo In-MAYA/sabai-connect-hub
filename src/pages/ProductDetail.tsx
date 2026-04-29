@@ -47,7 +47,7 @@ export default function ProductDetail() {
             </>
           )}
         </div>
-        <h1 className="mt-2 text-lg font-semibold leading-snug">{product.title}</h1>
+        <h1 className="mt-2 text-lg font-semibold leading-snug">{(() => { const k = `product.title.${product.id}`; const v = t(k); return v === k ? product.title : v; })()}</h1>
         <div className="mt-2 flex items-center gap-3 text-sm">
           <span className="flex items-center gap-1">
             <Star className="h-4 w-4 fill-warning text-warning" />

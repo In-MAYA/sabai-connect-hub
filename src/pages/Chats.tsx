@@ -64,42 +64,53 @@ export default function Chats() {
 
       {/* Chat list */}
       <div className="mt-1">
-        {chats.map((c) => (
-          <Link
-            key={c.id}
-            to={`/chat/${c.id}`}
-            className="flex items-center gap-3 px-4 py-3 active:bg-muted/60 transition-smooth"
-          >
-            <Avatar name={c.user.name} gradient={c.user.avatar} size="lg" online={c.user.online} />
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-1.5">
-                <h3 className="font-semibold truncate">{c.user.name}</h3>
-                {c.user.verified && (
-                  <span className="h-4 w-4 rounded-full bg-primary text-primary-foreground text-[9px] font-bold flex items-center justify-center">✓</span>
-                )}
-                {c.isGroup && (
-                  <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-md">{c.members}</span>
+        {chats.map((c) => {
+          const lastKey = `chats.last.${c.id}`;
+          const lastMsg = t(lastKey) === lastKey ? c.lastMessage : t(lastKey);
+          const timeMap: Record<string, string> = {
+            "เมื่อวาน": t("chats.time.yesterday"),
+            "จันทร์": t("chats.time.monday"),
+            "อาทิตย์": t("chats.time.sunday"),
+          };
+          const time = timeMap[c.time] ?? c.time;
+          const name = c.isGroup ? t("chats.group.team") : c.user.name;
+          return (
+            <Link
+              key={c.id}
+              to={`/chat/${c.id}`}
+              className="flex items-center gap-3 px-4 py-3 active:bg-muted/60 transition-smooth"
+            >
+              <Avatar name={c.user.name} gradient={c.user.avatar} size="lg" online={c.user.online} />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <h3 className="font-semibold truncate">{name}</h3>
+                  {c.user.verified && (
+                    <span className="h-4 w-4 rounded-full bg-primary text-primary-foreground text-[9px] font-bold flex items-center justify-center">✓</span>
+                  )}
+                  {c.isGroup && (
+                    <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-md">{c.members}</span>
+                  )}
+                </div>
+                <p className="text-sm text-muted-foreground truncate flex items-center gap-1 mt-0.5">
+                  {c.unread === 0 && <CheckCheck className="h-3.5 w-3.5 text-primary shrink-0" />}
+                  {lastMsg}
+                </p>
+              </div>
+              <div className="flex flex-col items-end gap-1.5 shrink-0">
+                <span className={`text-[11px] ${c.unread ? "text-primary font-semibold" : "text-muted-foreground"}`}>{time}</span>
+                {c.unread > 0 ? (
+                  <span className="min-w-[20px] h-5 px-1.5 rounded-full bg-gradient-primary text-primary-foreground text-[11px] font-bold flex items-center justify-center shadow-soft">
+                    {c.unread}
+                  </span>
+                ) : c.pinned ? (
+                  <Pin className="h-3.5 w-3.5 text-muted-foreground fill-current" />
+                ) : (
+                  <span className="h-5" />
                 )}
               </div>
-              <p className="text-sm text-muted-foreground truncate flex items-center gap-1 mt-0.5">
-                {c.unread === 0 && <CheckCheck className="h-3.5 w-3.5 text-primary shrink-0" />}
-                {c.lastMessage}
-              </p>
-            </div>
-            <div className="flex flex-col items-end gap-1.5 shrink-0">
-              <span className={`text-[11px] ${c.unread ? "text-primary font-semibold" : "text-muted-foreground"}`}>{c.time}</span>
-              {c.unread > 0 ? (
-                <span className="min-w-[20px] h-5 px-1.5 rounded-full bg-gradient-primary text-primary-foreground text-[11px] font-bold flex items-center justify-center shadow-soft">
-                  {c.unread}
-                </span>
-              ) : c.pinned ? (
-                <Pin className="h-3.5 w-3.5 text-muted-foreground fill-current" />
-              ) : (
-                <span className="h-5" />
-              )}
-            </div>
-          </Link>
-        ))}
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

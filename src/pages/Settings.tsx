@@ -125,6 +125,7 @@ export default function Settings() {
   const [lastSeen, setLastSeen] = useState(true);
   const [autoDownload, setAutoDownload] = useState(true);
   const [sounds, setSounds] = useState(true);
+  const [langOpen, setLangOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
@@ -168,7 +169,7 @@ export default function Settings() {
             <Avatar name={currentUser.name} gradient={currentUser.avatar} size="lg" />
           </div>
           <div className="flex-1 text-left min-w-0">
-            <p className="font-display text-base font-extrabold truncate">{currentUser.name}</p>
+            <p className="font-display text-base font-extrabold truncate">{t("mock.user.me")}</p>
             <p className="text-xs text-primary-foreground/85 truncate">{currentUser.username}</p>
             <p className="text-[11px] mt-1 text-primary-foreground/80 inline-flex items-center gap-1">
               <QrCode className="h-3 w-3" /> {t("settings.viewProfile")}
@@ -205,8 +206,10 @@ export default function Settings() {
       <Section title={t("settings.section.appearance")}>
         <SettingsRow row={{ icon: Moon, label: t("settings.appearance.dark"), hint: dark ? t("settings.on") : t("settings.off"), tone: "slate", control: <Switch checked={dark} onCheckedChange={setDark} /> }} />
         <SettingsRow row={{ icon: Palette, label: t("settings.appearance.theme"), hint: t("settings.appearance.skyBlue"), onClick: stub(t("settings.appearance.theme")), tone: "primary" }} />
-        <SettingsRow row={{ icon: Languages, label: t("settings.appearance.language"), hint: langLabel, onClick: () => document.querySelector<HTMLButtonElement>("[aria-label='" + t("auth.language") + "']")?.click(), tone: "emerald" }} />
+        <SettingsRow row={{ icon: Languages, label: t("settings.appearance.language"), hint: langLabel, onClick: () => setLangOpen(true), tone: "emerald" }} />
       </Section>
+
+      <LanguagePicker open={langOpen} onOpenChange={setLangOpen} hideTrigger />
 
       {/* Data & storage */}
       <Section title={t("settings.section.data")}>
