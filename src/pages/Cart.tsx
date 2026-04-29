@@ -40,7 +40,7 @@ export default function Cart() {
             <div className="flex gap-3">
               <img src={it.image} alt={it.title} className="h-20 w-20 rounded-xl object-cover bg-muted" />
               <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-medium line-clamp-2">{it.title}</h3>
+                <h3 className="text-sm font-medium line-clamp-2">{(() => { const k = `product.title.${it.id}`; const v = t(k); return v === k ? it.title : v; })()}</h3>
                 <div className="mt-2 flex items-center justify-between">
                   <span className="font-display font-bold text-primary">฿{it.price.toLocaleString()}</span>
                   <div className="flex items-center gap-1 bg-muted rounded-full p-1">
