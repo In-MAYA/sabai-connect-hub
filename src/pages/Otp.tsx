@@ -19,7 +19,7 @@ const resendOtp = (phone: string) =>
 export default function Otp() {
   const navigate = useNavigate();
   const { t } = useI18n();
-  const [code, setCode] = useState(["", "", "", "", "", ""]);
+  const [code, setCode] = useState(["", "", "", "", ""]);
   const [resending, setResending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
   const refs = useRef<(HTMLInputElement | null)[]>([]);
@@ -33,7 +33,7 @@ export default function Otp() {
     const next = [...code];
     next[i] = ch;
     setCode(next);
-    if (ch && i < 5) refs.current[i + 1]?.focus();
+    if (ch && i < 4) refs.current[i + 1]?.focus();
   };
 
   const filled = code.every((c) => c.length === 1);
@@ -43,7 +43,7 @@ export default function Otp() {
     if (!cooldown.trigger()) return;
     setResending(true);
     setSendError(null);
-    setCode(["", "", "", "", "", ""]);
+    setCode(["", "", "", "", ""]);
     refs.current[0]?.focus();
     try {
       await resendOtp(phone);
@@ -75,7 +75,7 @@ export default function Otp() {
           {t("otp.sentTo")} <span className="font-semibold text-primary font-mono">{phone}</span>
         </div>
 
-        <div className="mt-8 grid grid-cols-6 gap-2">
+        <div className="mt-8 grid grid-cols-5 gap-2">
           {code.map((d, i) => (
             <input
               key={i}
