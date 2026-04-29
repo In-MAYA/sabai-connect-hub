@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import Otp from "./pages/Otp";
 import SetupProfile from "./pages/SetupProfile";
 import Chats from "./pages/Chats";
+import Contacts from "./pages/Contacts";
 import Conversation from "./pages/Conversation";
 import Feed from "./pages/Feed";
 import Shop from "./pages/Shop";
@@ -36,6 +37,7 @@ const App = () => (
               <Route path="/otp" element={<Otp />} />
               <Route path="/setup-profile" element={<SetupProfile />} />
               <Route path="/chats" element={<Chats />} />
+              <Route path="/contacts" element={<Contacts />} />
               <Route path="/chat/:id" element={<Conversation />} />
               <Route path="/feed" element={<Feed />} />
               <Route path="/shop" element={<Shop />} />
