@@ -53,7 +53,7 @@ export default function Profile() {
           </div>
           <div className="mt-3">
             <div className="flex items-center gap-1.5">
-              <h2 className="font-display text-xl font-extrabold">{currentUser.name}</h2>
+              <h2 className="font-display text-xl font-extrabold">{t("mock.user.me")}</h2>
               {currentUser.verified && <BadgeCheck className="h-5 w-5 text-primary fill-primary text-background" />}
             </div>
             <p className="text-sm text-muted-foreground">{currentUser.username}</p>
