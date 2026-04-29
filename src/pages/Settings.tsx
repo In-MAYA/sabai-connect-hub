@@ -169,7 +169,7 @@ export default function Settings() {
             <Avatar name={currentUser.name} gradient={currentUser.avatar} size="lg" />
           </div>
           <div className="flex-1 text-left min-w-0">
-            <p className="font-display text-base font-extrabold truncate">{currentUser.name}</p>
+            <p className="font-display text-base font-extrabold truncate">{t("mock.user.me")}</p>
             <p className="text-xs text-primary-foreground/85 truncate">{currentUser.username}</p>
             <p className="text-[11px] mt-1 text-primary-foreground/80 inline-flex items-center gap-1">
               <QrCode className="h-3 w-3" /> {t("settings.viewProfile")}
