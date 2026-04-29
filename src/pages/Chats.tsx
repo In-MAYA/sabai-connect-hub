@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
 import { Avatar } from "@/components/Avatar";
 import { chats, stories } from "@/lib/mock-data";
-import { Search, Edit3, Pin, CheckCheck, Plus } from "lucide-react";
+import { Search, Edit3, Pin, CheckCheck, Plus, UserPlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useI18n } from "@/lib/i18n";
 
@@ -15,9 +15,13 @@ export default function Chats() {
         large
         right={
           <>
-            <button className="h-10 w-10 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center transition-smooth">
-              <Search className="h-5 w-5" />
-            </button>
+            <Link
+              to="/contacts"
+              aria-label={t("contacts.title")}
+              className="h-10 w-10 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center transition-smooth"
+            >
+              <UserPlus className="h-5 w-5" />
+            </Link>
             <button className="h-10 w-10 rounded-full bg-gradient-primary text-primary-foreground flex items-center justify-center shadow-glow">
               <Edit3 className="h-4 w-4" />
             </button>
