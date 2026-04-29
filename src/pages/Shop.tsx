@@ -84,7 +84,7 @@ export default function Shop() {
               )}
             </div>
             <div className="px-1 mt-2">
-              <h3 className="text-sm font-medium line-clamp-2 leading-snug min-h-[2.5rem]">{p.title}</h3>
+              <h3 className="text-sm font-medium line-clamp-2 leading-snug min-h-[2.5rem]">{(() => { const k = `product.title.${p.id}`; const v = t(k); return v === k ? p.title : v; })()}</h3>
               <div className="flex items-baseline gap-1.5 mt-1">
                 <span className="font-display text-base font-bold text-primary">฿{p.price.toLocaleString()}</span>
                 {p.originalPrice && <span className="text-[11px] text-muted-foreground line-through">฿{p.originalPrice.toLocaleString()}</span>}
