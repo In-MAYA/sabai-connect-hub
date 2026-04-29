@@ -3,22 +3,38 @@ import { Check, Globe, X } from "lucide-react";
 import { languages, useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
-export function LanguagePicker() {
+type Props = {
+  /** Optional controlled open state. When provided, the trigger button is hidden. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** Hide the default trigger (useful when opening from elsewhere). */
+  hideTrigger?: boolean;
+};
+
+export function LanguagePicker({ open: openProp, onOpenChange, hideTrigger }: Props = {}) {
   const { lang, setLang, t } = useI18n();
-  const [open, setOpen] = useState(false);
+  const [openState, setOpenState] = useState(false);
+  const isControlled = openProp !== undefined;
+  const open = isControlled ? openProp! : openState;
+  const setOpen = (v: boolean) => {
+    if (!isControlled) setOpenState(v);
+    onOpenChange?.(v);
+  };
   const current = languages.find((l) => l.code === lang) ?? languages[0];
 
   return (
     <>
-      <button
-        onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1.5 px-3 h-9 rounded-full bg-background/80 backdrop-blur-md border border-border text-xs font-semibold shadow-soft active:scale-95 transition-transform"
-        aria-label={t("auth.language")}
-      >
-        <Globe className="h-3.5 w-3.5 text-primary" />
-        <span>{current.flag}</span>
-        <span>{current.native}</span>
-      </button>
+      {!hideTrigger && (
+        <button
+          onClick={() => setOpen(true)}
+          className="inline-flex items-center gap-1.5 px-3 h-9 rounded-full bg-background/80 backdrop-blur-md border border-border text-xs font-semibold shadow-soft active:scale-95 transition-transform"
+          aria-label={t("auth.language")}
+        >
+          <Globe className="h-3.5 w-3.5 text-primary" />
+          <span>{current.flag}</span>
+          <span>{current.native}</span>
+        </button>
+      )}
 
       {open && (
         <div
