@@ -125,6 +125,7 @@ export default function Settings() {
   const [lastSeen, setLastSeen] = useState(true);
   const [autoDownload, setAutoDownload] = useState(true);
   const [sounds, setSounds] = useState(true);
+  const [langOpen, setLangOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
