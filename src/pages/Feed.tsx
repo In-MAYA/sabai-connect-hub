@@ -91,10 +91,10 @@ export default function Feed() {
                 {p.user.verified && <span className="h-4 w-4 rounded-full bg-primary text-primary-foreground text-[9px] font-bold flex items-center justify-center">✓</span>}
                 <button className="ml-1 h-7 px-3 rounded-full border border-white/80 text-xs font-semibold backdrop-blur-md">{t("feed.follow")}</button>
               </div>
-              <p className="mt-2 text-sm leading-snug drop-shadow">{p.caption}</p>
+              <p className="mt-2 text-sm leading-snug drop-shadow">{(() => { const k = `feed.cap.${p.id}`; const v = t(k); return v === k ? p.caption : v; })()}</p>
               <div className="mt-2 flex items-center gap-1.5 text-xs">
                 <Music2 className="h-3.5 w-3.5" />
-                <span className="font-medium truncate">{p.music}</span>
+                <span className="font-medium truncate">{(() => { const k = `feed.music.${p.id}`; const v = t(k); return v === k ? p.music : v; })()}</span>
               </div>
             </div>
           </div>
