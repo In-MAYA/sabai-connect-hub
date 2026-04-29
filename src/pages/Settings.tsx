@@ -206,8 +206,10 @@ export default function Settings() {
       <Section title={t("settings.section.appearance")}>
         <SettingsRow row={{ icon: Moon, label: t("settings.appearance.dark"), hint: dark ? t("settings.on") : t("settings.off"), tone: "slate", control: <Switch checked={dark} onCheckedChange={setDark} /> }} />
         <SettingsRow row={{ icon: Palette, label: t("settings.appearance.theme"), hint: t("settings.appearance.skyBlue"), onClick: stub(t("settings.appearance.theme")), tone: "primary" }} />
-        <SettingsRow row={{ icon: Languages, label: t("settings.appearance.language"), hint: langLabel, onClick: () => document.querySelector<HTMLButtonElement>("[aria-label='" + t("auth.language") + "']")?.click(), tone: "emerald" }} />
+        <SettingsRow row={{ icon: Languages, label: t("settings.appearance.language"), hint: langLabel, onClick: () => setLangOpen(true), tone: "emerald" }} />
       </Section>
+
+      <LanguagePicker open={langOpen} onOpenChange={setLangOpen} hideTrigger />
 
       {/* Data & storage */}
       <Section title={t("settings.section.data")}>
