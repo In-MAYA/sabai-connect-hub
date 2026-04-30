@@ -7,13 +7,14 @@ interface PageHeaderProps {
   title: string;
   subtitle?: string;
   back?: boolean;
+  left?: ReactNode;
   right?: ReactNode;
   transparent?: boolean;
   className?: string;
   large?: boolean;
 }
 
-export function PageHeader({ title, subtitle, back, right, transparent, className, large }: PageHeaderProps) {
+export function PageHeader({ title, subtitle, back, left, right, transparent, className, large }: PageHeaderProps) {
   const navigate = useNavigate();
   return (
     <header
@@ -24,14 +25,16 @@ export function PageHeader({ title, subtitle, back, right, transparent, classNam
       )}
     >
       <div className="flex items-center gap-2 px-4 h-14">
-        {back && (
+        {left ? (
+          <div className="flex items-center -ml-1">{left}</div>
+        ) : back ? (
           <button
             onClick={() => navigate(-1)}
             className="h-10 w-10 -ml-2 rounded-full hover:bg-muted flex items-center justify-center transition-smooth"
           >
             <ChevronLeft className="h-6 w-6" />
           </button>
-        )}
+        ) : null}
         <div className="flex-1 min-w-0">
           <h1 className={cn("font-display font-bold truncate", large ? "text-2xl" : "text-lg")}>{title}</h1>
           {subtitle && <p className="text-xs text-muted-foreground truncate">{subtitle}</p>}
