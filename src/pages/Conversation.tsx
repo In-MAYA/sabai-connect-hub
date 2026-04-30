@@ -1,10 +1,10 @@
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef, useMemo, KeyboardEvent, ChangeEvent } from "react";
 import { Avatar } from "@/components/Avatar";
-import { chats, messages as seedMessages, type Message, type Attachment } from "@/lib/mock-data";
+import { chats, users, messages as seedMessages, type Message, type Attachment, type Chat } from "@/lib/mock-data";
 import {
   ChevronLeft, Phone, Video, Plus, Smile, Mic, Send, Check, CheckCheck, Camera,
-  Image as ImageIcon, FileText, Film, X, Play, Download, File as FileIcon,
+  Image as ImageIcon, FileText, Film, X, Play, Download, File as FileIcon, Users as UsersIcon,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -26,13 +26,41 @@ const autoReplies = [
 
 type AttachKind = "image" | "video" | "file";
 
+type GroupState = { isGroup?: boolean; name?: string; memberIds?: string[] };
+
 export default function Conversation() {
   const { id = "c1" } = useParams();
   const navigate = useNavigate();
-  const chat = useMemo(() => chats.find((c) => c.id === id) ?? chats[0], [id]);
+  const location = useLocation();
+  const groupState = (location.state || {}) as GroupState;
+
+  const chat = useMemo<Chat>(() => {
+    const found = chats.find((c) => c.id === id);
+    if (found) return found;
+    if (groupState.isGroup && groupState.name) {
+      const memberCount = (groupState.memberIds?.length ?? 0) + 1; // +1 for me
+      return {
+        id,
+        user: {
+          id,
+          name: groupState.name,
+          username: "group",
+          avatar: "from-violet-500 to-fuchsia-500",
+        },
+        lastMessage: "",
+        time: "",
+        unread: 0,
+        isGroup: true,
+        members: memberCount,
+      };
+    }
+    return chats[0];
+  }, [id, groupState]);
+
+  const isNewGroup = chat.isGroup && !seedMessages[chat.id];
 
   const [msgs, setMsgs] = useState<Message[]>(() =>
-    (seedMessages[chat.id] ?? seedMessages.c1).map((m) => ({ ...m })),
+    isNewGroup ? [] : (seedMessages[chat.id] ?? seedMessages.c1).map((m) => ({ ...m })),
   );
   const [draft, setDraft] = useState("");
   const [theyTyping, setTheyTyping] = useState(false);
