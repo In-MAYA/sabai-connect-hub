@@ -420,11 +420,19 @@ export default function Contacts() {
                 else navigate(`/chat/${c.user.id}`);
               };
               return (
-                <button
+                <div
                   key={c.id}
+                  role="button"
+                  tabIndex={0}
                   onClick={onRowClick}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      onRowClick();
+                    }
+                  }}
                   className={cn(
-                    "w-full flex items-center gap-3 px-4 py-3 active:bg-muted/60 transition-smooth text-left",
+                    "w-full flex items-center gap-3 px-4 py-3 active:bg-muted/60 transition-smooth text-left cursor-pointer select-none",
                     inSelect && isSelected && "bg-primary/5",
                   )}
                 >
@@ -467,7 +475,7 @@ export default function Contacts() {
                       <MessageCircle className="h-4 w-4" />
                     </Link>
                   )}
-                </button>
+                </div>
               );
             })
           )}
