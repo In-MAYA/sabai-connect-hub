@@ -350,30 +350,24 @@ export default function Contacts() {
           </button>
         )}
 
-        {/* Selected pills (select only) */}
-        {inSelect && (
-          <div className="rounded-2xl bg-primary/5 border border-primary/15 p-2.5">
-            {selectedContacts.length === 0 ? (
-              <p className="text-xs text-muted-foreground text-center py-1.5">
-                {t("contacts.selectAtLeast")}
-              </p>
-            ) : (
-              <div className="flex gap-2 overflow-x-auto no-scrollbar">
-                {selectedContacts.map((c) => (
-                  <button
-                    key={c.id}
-                    onClick={() => toggle(c.id)}
-                    className="shrink-0 flex items-center gap-1.5 bg-card pl-1 pr-2.5 py-1 rounded-full shadow-soft border"
-                  >
-                    <Avatar name={c.user.name} gradient={c.user.avatar} size="xs" />
-                    <span className="text-xs font-semibold max-w-[80px] truncate">
-                      {c.name.split(" ")[0]}
-                    </span>
-                    <X className="h-3 w-3 text-muted-foreground" />
-                  </button>
-                ))}
-              </div>
-            )}
+        {/* Selected pills (select only, only when there are selections) */}
+        {inSelect && selectedContacts.length > 0 && (
+          <div className="rounded-2xl bg-primary/5 border border-primary/15 p-2.5 animate-fade-in">
+            <div className="flex gap-2 overflow-x-auto no-scrollbar">
+              {selectedContacts.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => toggle(c.id)}
+                  className="shrink-0 flex items-center gap-1.5 bg-card pl-1 pr-2.5 py-1 rounded-full shadow-soft border"
+                >
+                  <Avatar name={c.user.name} gradient={c.user.avatar} size="xs" />
+                  <span className="text-xs font-semibold max-w-[80px] truncate">
+                    {c.name.split(" ")[0]}
+                  </span>
+                  <X className="h-3 w-3 text-muted-foreground" />
+                </button>
+              ))}
+            </div>
           </div>
         )}
 

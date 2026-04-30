@@ -1,10 +1,10 @@
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef, useMemo, KeyboardEvent, ChangeEvent } from "react";
 import { Avatar } from "@/components/Avatar";
-import { chats, messages as seedMessages, type Message, type Attachment } from "@/lib/mock-data";
+import { chats, users, messages as seedMessages, type Message, type Attachment, type Chat } from "@/lib/mock-data";
 import {
   ChevronLeft, Phone, Video, Plus, Smile, Mic, Send, Check, CheckCheck, Camera,
-  Image as ImageIcon, FileText, Film, X, Play, Download, File as FileIcon,
+  Image as ImageIcon, FileText, Film, X, Play, Download, File as FileIcon, Users as UsersIcon,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -26,13 +26,41 @@ const autoReplies = [
 
 type AttachKind = "image" | "video" | "file";
 
+type GroupState = { isGroup?: boolean; name?: string; memberIds?: string[] };
+
 export default function Conversation() {
   const { id = "c1" } = useParams();
   const navigate = useNavigate();
-  const chat = useMemo(() => chats.find((c) => c.id === id) ?? chats[0], [id]);
+  const location = useLocation();
+  const groupState = (location.state || {}) as GroupState;
+
+  const chat = useMemo<Chat>(() => {
+    const found = chats.find((c) => c.id === id);
+    if (found) return found;
+    if (groupState.isGroup && groupState.name) {
+      const memberCount = (groupState.memberIds?.length ?? 0) + 1; // +1 for me
+      return {
+        id,
+        user: {
+          id,
+          name: groupState.name,
+          username: "group",
+          avatar: "from-violet-500 to-fuchsia-500",
+        },
+        lastMessage: "",
+        time: "",
+        unread: 0,
+        isGroup: true,
+        members: memberCount,
+      };
+    }
+    return chats[0];
+  }, [id, groupState]);
+
+  const isNewGroup = chat.isGroup && !seedMessages[chat.id];
 
   const [msgs, setMsgs] = useState<Message[]>(() =>
-    (seedMessages[chat.id] ?? seedMessages.c1).map((m) => ({ ...m })),
+    isNewGroup ? [] : (seedMessages[chat.id] ?? seedMessages.c1).map((m) => ({ ...m })),
   );
   const [draft, setDraft] = useState("");
   const [theyTyping, setTheyTyping] = useState(false);
@@ -79,6 +107,26 @@ export default function Conversation() {
   };
 
   const triggerPeerReply = () => {
+    if (chat.isGroup) {
+      // Group: pick a random member to "reply"
+      const memberIds = groupState.memberIds ?? [];
+      const replier = memberIds[Math.floor(Math.random() * memberIds.length)];
+      const replierUser = users.find((u) => u.id === replier);
+      if (!replierUser) return;
+      window.setTimeout(() => setTheyTyping(true), 1100);
+      if (replyTimeoutRef.current) clearTimeout(replyTimeoutRef.current);
+      replyTimeoutRef.current = window.setTimeout(() => {
+        setTheyTyping(false);
+        const reply: Message = {
+          id: `m_${Date.now()}_r`,
+          senderId: replierUser.id,
+          text: autoReplies[Math.floor(Math.random() * autoReplies.length)],
+          time: formatTime(new Date()),
+        };
+        setMsgs((prev) => [...prev, reply]);
+      }, 2400 + Math.random() * 1200);
+      return;
+    }
     window.setTimeout(() => setTheyTyping(true), 1100);
     if (replyTimeoutRef.current) clearTimeout(replyTimeoutRef.current);
     replyTimeoutRef.current = window.setTimeout(() => {
@@ -176,7 +224,13 @@ export default function Conversation() {
           <button onClick={() => navigate(-1)} className="h-10 w-10 -ml-1 rounded-full hover:bg-muted flex items-center justify-center">
             <ChevronLeft className="h-6 w-6" />
           </button>
-          <Avatar name={chat.user.name} gradient={chat.user.avatar} size="sm" online={chat.user.online} />
+          {chat.isGroup ? (
+            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white flex items-center justify-center shadow-soft">
+              <UsersIcon className="h-4 w-4" />
+            </div>
+          ) : (
+            <Avatar name={chat.user.name} gradient={chat.user.avatar} size="sm" online={chat.user.online} />
+          )}
           <div className="flex-1 min-w-0">
             <h2 className="font-semibold text-sm truncate">{chat.user.name}</h2>
             <p className="text-[11px] font-medium flex items-center gap-1">
@@ -189,6 +243,8 @@ export default function Conversation() {
                   </span>
                   กำลังพิมพ์...
                 </span>
+              ) : chat.isGroup ? (
+                <span className="text-muted-foreground">{chat.members ?? 0} สมาชิก</span>
               ) : chat.user.online ? (
                 <span className="text-success flex items-center gap-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />ออนไลน์
@@ -212,6 +268,21 @@ export default function Conversation() {
         <div className="text-center">
           <span className="text-[11px] text-muted-foreground bg-background/60 px-3 py-1 rounded-full">วันนี้</span>
         </div>
+
+        {isNewGroup && msgs.length === 0 && (
+          <div className="flex flex-col items-center text-center py-8 px-6 animate-fade-in">
+            <div className="h-16 w-16 rounded-3xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white flex items-center justify-center shadow-glow mb-3">
+              <UsersIcon className="h-8 w-8" />
+            </div>
+            <h3 className="font-display font-bold text-base">{chat.user.name}</h3>
+            <p className="text-xs text-muted-foreground mt-1">
+              สร้างกลุ่มแล้ว · {chat.members} สมาชิก
+            </p>
+            <p className="text-xs text-muted-foreground mt-3 max-w-[240px]">
+              ส่งข้อความแรกเพื่อเริ่มสนทนา 👋
+            </p>
+          </div>
+        )}
 
         {msgs.map((m, idx) => {
           const me = m.senderId === "me";
