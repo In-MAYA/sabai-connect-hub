@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { Avatar } from "@/components/Avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   ShieldCheck,
   Loader2,
@@ -12,8 +13,10 @@ import {
   Users,
   Search,
   RefreshCw,
-  CheckCircle2,
   Lock,
+  X,
+  ArrowRight,
+  Sparkles,
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import {
@@ -28,6 +31,8 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
+type Stage = "browse" | "select" | "form";
+
 export default function Contacts() {
   const { t } = useI18n();
   const navigate = useNavigate();
@@ -37,7 +42,7 @@ export default function Contacts() {
   const [unregistered, setUnregistered] = useState<DeviceContact[]>([]);
   const [tab, setTab] = useState<"app" | "invite">("app");
   const [q, setQ] = useState("");
-  const [groupMode, setGroupMode] = useState(false);
+  const [stage, setStage] = useState<Stage>("browse");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [groupName, setGroupName] = useState("");
 
@@ -86,6 +91,11 @@ export default function Contacts() {
     );
   }, [unregistered, q]);
 
+  const selectedContacts = useMemo(
+    () => registered.filter((c) => selected.has(c.id)),
+    [registered, selected],
+  );
+
   const toggle = (id: string) => {
     setSelected((prev) => {
       const next = new Set(prev);
@@ -95,15 +105,39 @@ export default function Contacts() {
     });
   };
 
-  const createGroup = () => {
-    const name = groupName.trim() || t("contacts.newGroup");
-    toast.success(
-      t("contacts.groupCreated", { name, n: selected.size }),
-    );
-    setGroupMode(false);
+  const enterSelect = () => {
+    setStage("select");
+    setSelected(new Set());
+    setTab("app");
+  };
+
+  const cancelSelect = () => {
+    setStage("browse");
     setSelected(new Set());
     setGroupName("");
-    navigate("/chats");
+  };
+
+  const goToForm = () => {
+    if (selected.size < 2) {
+      toast.error(t("contacts.minMembers"));
+      return;
+    }
+    setStage("form");
+  };
+
+  const createGroup = () => {
+    const name = groupName.trim() || t("contacts.newGroup");
+    const memberIds = Array.from(selected);
+    toast.success(
+      t("contacts.groupCreated", { name, n: memberIds.length }),
+    );
+    const groupId = "g-" + Date.now().toString(36);
+    setStage("browse");
+    setSelected(new Set());
+    setGroupName("");
+    navigate(`/chat/${groupId}`, {
+      state: { isGroup: true, name, memberIds },
+    });
   };
 
   const invite = (c: DeviceContact) => {
@@ -160,21 +194,134 @@ export default function Contacts() {
     );
   }
 
-  // ── Synced view ────────────────────────────────────────────────
-  return (
-    <div>
-      <PageHeader
-        title={t("contacts.title")}
-        back
-        right={
-          <button
-            onClick={runSync}
-            disabled={syncing}
-            aria-label={t("contacts.resync")}
-            className="h-10 w-10 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center transition-smooth"
+  // ── Stage: dedicated create-group form ─────────────────────────
+  if (stage === "form") {
+    return (
+      <div className="pb-32">
+        <PageHeader
+          title={t("contacts.createGroupTitle")}
+          left={
+            <button
+              onClick={() => setStage("select")}
+              aria-label={t("common.cancel")}
+              className="h-10 w-10 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center transition-smooth"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          }
+        />
+
+        <div className="px-5 pt-4 space-y-6">
+          {/* Group identity */}
+          <div className="flex flex-col items-center text-center">
+            <div className="h-24 w-24 rounded-3xl bg-gradient-primary text-primary-foreground flex items-center justify-center shadow-glow mb-4">
+              <Users className="h-11 w-11" strokeWidth={2} />
+            </div>
+            <label className="w-full">
+              <span className="sr-only">{t("contacts.groupName")}</span>
+              <Input
+                autoFocus
+                value={groupName}
+                onChange={(e) => setGroupName(e.target.value)}
+                placeholder={t("contacts.groupNamePlaceholder")}
+                maxLength={40}
+                className="h-13 rounded-2xl text-center font-display text-lg font-semibold border-2 focus-visible:border-primary focus-visible:ring-0"
+              />
+            </label>
+            <p className="text-[11px] text-muted-foreground mt-2 flex items-center gap-1">
+              <Sparkles className="h-3 w-3" />
+              {groupName.length}/40
+            </p>
+          </div>
+
+          {/* Members preview */}
+          <div>
+            <div className="flex items-center justify-between px-1 mb-2">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                {t("contacts.members")} · {selectedContacts.length}
+              </h3>
+              <button
+                onClick={() => setStage("select")}
+                className="text-xs font-semibold text-primary"
+              >
+                {t("common.edit") === "common.edit" ? "Edit" : t("common.edit")}
+              </button>
+            </div>
+            <div className="rounded-2xl border bg-card divide-y divide-border/60 overflow-hidden">
+              {selectedContacts.map((c) => (
+                <div key={c.id} className="flex items-center gap-3 px-3 py-2.5">
+                  <Avatar
+                    name={c.user.name}
+                    gradient={c.user.avatar}
+                    size="md"
+                    online={c.user.online}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold truncate text-sm">{c.name}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">
+                      {c.user.online
+                        ? t("contacts.online")
+                        : t("contacts.lastSeen", { when: c.lastSeen })}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => toggle(c.id)}
+                    aria-label="remove"
+                    className="h-7 w-7 rounded-full bg-muted hover:bg-destructive/10 hover:text-destructive flex items-center justify-center transition-smooth"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Sticky create bar */}
+        <div className="fixed bottom-0 left-0 right-0 border-t bg-background/95 backdrop-blur-md p-4 z-40">
+          <Button
+            onClick={createGroup}
+            disabled={selectedContacts.length < 2}
+            className="w-full h-13 rounded-2xl bg-gradient-primary text-base font-semibold shadow-glow"
           >
-            <RefreshCw className={cn("h-4 w-4", syncing && "animate-spin")} />
-          </button>
+            {t("contacts.startChat")}
+            <ArrowRight className="h-4 w-4 ml-1" />
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Stage: browse / select ─────────────────────────────────────
+  const inSelect = stage === "select";
+
+  return (
+    <div className={cn(inSelect && "pb-28")}>
+      <PageHeader
+        title={inSelect ? t("contacts.newGroup") : t("contacts.title")}
+        back={!inSelect}
+        left={
+          inSelect ? (
+            <button
+              onClick={cancelSelect}
+              aria-label={t("common.cancel")}
+              className="h-10 w-10 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center transition-smooth"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          ) : undefined
+        }
+        right={
+          !inSelect ? (
+            <button
+              onClick={runSync}
+              disabled={syncing}
+              aria-label={t("contacts.resync")}
+              className="h-10 w-10 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center transition-smooth"
+            >
+              <RefreshCw className={cn("h-4 w-4", syncing && "animate-spin")} />
+            </button>
+          ) : undefined
         }
       />
 
@@ -190,10 +337,10 @@ export default function Contacts() {
           />
         </div>
 
-        {/* New group entry */}
-        {!groupMode ? (
+        {/* New group entry (browse only) */}
+        {!inSelect && (
           <button
-            onClick={() => setGroupMode(true)}
+            onClick={enterSelect}
             className="w-full flex items-center gap-3 rounded-2xl bg-primary/10 hover:bg-primary/15 transition-smooth px-3 py-3"
           >
             <div className="h-10 w-10 rounded-full bg-gradient-primary text-primary-foreground flex items-center justify-center">
@@ -201,62 +348,59 @@ export default function Contacts() {
             </div>
             <span className="font-semibold text-sm text-primary">{t("contacts.newGroup")}</span>
           </button>
-        ) : (
-          <div className="rounded-2xl border border-primary/30 bg-primary/5 p-3 space-y-2">
-            <Input
-              placeholder={t("contacts.groupName")}
-              value={groupName}
-              onChange={(e) => setGroupName(e.target.value)}
-              className="h-11 rounded-xl"
-            />
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-xs font-semibold text-muted-foreground">
-                {t("contacts.selectMembers", { n: selected.size })}
-              </span>
-              <div className="flex gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setGroupMode(false);
-                    setSelected(new Set());
-                  }}
-                >
-                  {t("common.cancel")}
-                </Button>
-                <Button
-                  size="sm"
-                  disabled={selected.size < 2}
-                  onClick={createGroup}
-                  className="bg-gradient-primary"
-                >
-                  {t("contacts.groupCreate")}
-                </Button>
+        )}
+
+        {/* Selected pills (select only) */}
+        {inSelect && (
+          <div className="rounded-2xl bg-primary/5 border border-primary/15 p-2.5">
+            {selectedContacts.length === 0 ? (
+              <p className="text-xs text-muted-foreground text-center py-1.5">
+                {t("contacts.selectAtLeast")}
+              </p>
+            ) : (
+              <div className="flex gap-2 overflow-x-auto no-scrollbar">
+                {selectedContacts.map((c) => (
+                  <button
+                    key={c.id}
+                    onClick={() => toggle(c.id)}
+                    className="shrink-0 flex items-center gap-1.5 bg-card pl-1 pr-2.5 py-1 rounded-full shadow-soft border"
+                  >
+                    <Avatar name={c.user.name} gradient={c.user.avatar} size="xs" />
+                    <span className="text-xs font-semibold max-w-[80px] truncate">
+                      {c.name.split(" ")[0]}
+                    </span>
+                    <X className="h-3 w-3 text-muted-foreground" />
+                  </button>
+                ))}
               </div>
-            </div>
+            )}
           </div>
         )}
 
-        {/* Tabs */}
-        <div className="flex gap-2 p-1 rounded-2xl bg-muted/60">
-          {(["app", "invite"] as const).map((k) => (
-            <button
-              key={k}
-              onClick={() => setTab(k)}
-              className={cn(
-                "flex-1 h-9 rounded-xl text-xs font-semibold transition-smooth",
-                tab === k ? "bg-card shadow-soft text-foreground" : "text-muted-foreground",
-              )}
-            >
-              {k === "app"
-                ? `${t("contacts.tab.onApp")} · ${registered.length}`
-                : `${t("contacts.tab.invite")} · ${unregistered.length}`}
-            </button>
-          ))}
-        </div>
+        {/* Tabs (browse only — select mode only shows On-app) */}
+        {!inSelect && (
+          <div className="flex gap-2 p-1 rounded-2xl bg-muted/60">
+            {(["app", "invite"] as const).map((k) => (
+              <button
+                key={k}
+                onClick={() => setTab(k)}
+                className={cn(
+                  "flex-1 h-9 rounded-xl text-xs font-semibold transition-smooth",
+                  tab === k ? "bg-card shadow-soft text-foreground" : "text-muted-foreground",
+                )}
+              >
+                {k === "app"
+                  ? `${t("contacts.tab.onApp")} · ${registered.length}`
+                  : `${t("contacts.tab.invite")} · ${unregistered.length}`}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Privacy footnote */}
-        <p className="text-[11px] text-muted-foreground px-1">{t("contacts.privacy")}</p>
+        {!inSelect && (
+          <p className="text-[11px] text-muted-foreground px-1">{t("contacts.privacy")}</p>
+        )}
       </div>
 
       {/* Loading state */}
@@ -267,8 +411,8 @@ export default function Contacts() {
         </div>
       )}
 
-      {/* Registered list */}
-      {tab === "app" && (
+      {/* Registered list (always shown in select mode) */}
+      {(inSelect || tab === "app") && (
         <div className="mt-2">
           {filteredReg.length === 0 && !syncing ? (
             <p className="text-center text-sm text-muted-foreground py-12">
@@ -278,15 +422,26 @@ export default function Contacts() {
             filteredReg.map((c) => {
               const isSelected = selected.has(c.id);
               const onRowClick = () => {
-                if (groupMode) toggle(c.id);
+                if (inSelect) toggle(c.id);
                 else navigate(`/chat/${c.user.id}`);
               };
               return (
                 <button
                   key={c.id}
                   onClick={onRowClick}
-                  className="w-full flex items-center gap-3 px-4 py-3 active:bg-muted/60 transition-smooth text-left"
+                  className={cn(
+                    "w-full flex items-center gap-3 px-4 py-3 active:bg-muted/60 transition-smooth text-left",
+                    inSelect && isSelected && "bg-primary/5",
+                  )}
                 >
+                  {inSelect && (
+                    <Checkbox
+                      checked={isSelected}
+                      onCheckedChange={() => toggle(c.id)}
+                      onClick={(e) => e.stopPropagation()}
+                      className="h-5 w-5 rounded-md"
+                    />
+                  )}
                   <Avatar
                     name={c.user.name}
                     gradient={c.user.avatar}
@@ -308,18 +463,7 @@ export default function Contacts() {
                         : t("contacts.lastSeen", { when: c.lastSeen })}
                     </p>
                   </div>
-                  {groupMode ? (
-                    <div
-                      className={cn(
-                        "h-7 w-7 rounded-full border-2 flex items-center justify-center transition-smooth",
-                        isSelected
-                          ? "bg-primary border-primary text-primary-foreground"
-                          : "border-muted-foreground/40",
-                      )}
-                    >
-                      {isSelected && <CheckCircle2 className="h-4 w-4" />}
-                    </div>
-                  ) : (
+                  {!inSelect && (
                     <Link
                       to={`/chat/${c.user.id}`}
                       onClick={(e) => e.stopPropagation()}
@@ -336,8 +480,8 @@ export default function Contacts() {
         </div>
       )}
 
-      {/* Invite list */}
-      {tab === "invite" && (
+      {/* Invite list (browse only) */}
+      {!inSelect && tab === "invite" && (
         <div className="mt-2">
           {filteredUnreg.length === 0 ? (
             <p className="text-center text-sm text-muted-foreground py-12">
@@ -370,6 +514,30 @@ export default function Contacts() {
               </div>
             ))
           )}
+        </div>
+      )}
+
+      {/* Sticky bottom action bar (select mode) */}
+      {inSelect && (
+        <div className="fixed bottom-0 left-0 right-0 border-t bg-background/95 backdrop-blur-md p-4 z-40 flex items-center gap-3">
+          <div className="flex-1 min-w-0">
+            <p className="font-display font-bold text-sm">
+              {t("contacts.selected", { n: selected.size })}
+            </p>
+            {selected.size < 2 && (
+              <p className="text-[11px] text-muted-foreground">
+                {t("contacts.minMembers")}
+              </p>
+            )}
+          </div>
+          <Button
+            onClick={goToForm}
+            disabled={selected.size < 2}
+            className="h-12 px-6 rounded-2xl bg-gradient-primary font-semibold shadow-glow"
+          >
+            {t("contacts.next")}
+            <ArrowRight className="h-4 w-4 ml-1" />
+          </Button>
         </div>
       )}
     </div>
