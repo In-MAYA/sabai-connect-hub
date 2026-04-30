@@ -224,7 +224,13 @@ export default function Conversation() {
           <button onClick={() => navigate(-1)} className="h-10 w-10 -ml-1 rounded-full hover:bg-muted flex items-center justify-center">
             <ChevronLeft className="h-6 w-6" />
           </button>
-          <Avatar name={chat.user.name} gradient={chat.user.avatar} size="sm" online={chat.user.online} />
+          {chat.isGroup ? (
+            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white flex items-center justify-center shadow-soft">
+              <UsersIcon className="h-4 w-4" />
+            </div>
+          ) : (
+            <Avatar name={chat.user.name} gradient={chat.user.avatar} size="sm" online={chat.user.online} />
+          )}
           <div className="flex-1 min-w-0">
             <h2 className="font-semibold text-sm truncate">{chat.user.name}</h2>
             <p className="text-[11px] font-medium flex items-center gap-1">
@@ -237,6 +243,8 @@ export default function Conversation() {
                   </span>
                   กำลังพิมพ์...
                 </span>
+              ) : chat.isGroup ? (
+                <span className="text-muted-foreground">{chat.members ?? 0} สมาชิก</span>
               ) : chat.user.online ? (
                 <span className="text-success flex items-center gap-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />ออนไลน์
