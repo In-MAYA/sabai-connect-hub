@@ -107,6 +107,26 @@ export default function Conversation() {
   };
 
   const triggerPeerReply = () => {
+    if (chat.isGroup) {
+      // Group: pick a random member to "reply"
+      const memberIds = groupState.memberIds ?? [];
+      const replier = memberIds[Math.floor(Math.random() * memberIds.length)];
+      const replierUser = users.find((u) => u.id === replier);
+      if (!replierUser) return;
+      window.setTimeout(() => setTheyTyping(true), 1100);
+      if (replyTimeoutRef.current) clearTimeout(replyTimeoutRef.current);
+      replyTimeoutRef.current = window.setTimeout(() => {
+        setTheyTyping(false);
+        const reply: Message = {
+          id: `m_${Date.now()}_r`,
+          senderId: replierUser.id,
+          text: autoReplies[Math.floor(Math.random() * autoReplies.length)],
+          time: formatTime(new Date()),
+        };
+        setMsgs((prev) => [...prev, reply]);
+      }, 2400 + Math.random() * 1200);
+      return;
+    }
     window.setTimeout(() => setTheyTyping(true), 1100);
     if (replyTimeoutRef.current) clearTimeout(replyTimeoutRef.current);
     replyTimeoutRef.current = window.setTimeout(() => {
