@@ -269,6 +269,21 @@ export default function Conversation() {
           <span className="text-[11px] text-muted-foreground bg-background/60 px-3 py-1 rounded-full">วันนี้</span>
         </div>
 
+        {isNewGroup && msgs.length === 0 && (
+          <div className="flex flex-col items-center text-center py-8 px-6 animate-fade-in">
+            <div className="h-16 w-16 rounded-3xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white flex items-center justify-center shadow-glow mb-3">
+              <UsersIcon className="h-8 w-8" />
+            </div>
+            <h3 className="font-display font-bold text-base">{chat.user.name}</h3>
+            <p className="text-xs text-muted-foreground mt-1">
+              สร้างกลุ่มแล้ว · {chat.members} สมาชิก
+            </p>
+            <p className="text-xs text-muted-foreground mt-3 max-w-[240px]">
+              ส่งข้อความแรกเพื่อเริ่มสนทนา 👋
+            </p>
+          </div>
+        )}
+
         {msgs.map((m, idx) => {
           const me = m.senderId === "me";
           const next = msgs[idx + 1];
