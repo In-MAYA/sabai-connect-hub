@@ -244,7 +244,7 @@ export default function Contacts() {
                 onClick={() => setStage("select")}
                 className="text-xs font-semibold text-primary"
               >
-                {t("common.edit") === "common.edit" ? "Edit" : t("common.edit")}
+                + {t("contacts.members")}
               </button>
             </div>
             <div className="rounded-2xl border bg-card divide-y divide-border/60 overflow-hidden">
