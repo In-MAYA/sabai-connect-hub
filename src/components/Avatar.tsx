@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface AvatarProps {
@@ -27,34 +28,37 @@ const dotMap = {
   "2xl": "h-5 w-5",
 };
 
-export function Avatar({ name, gradient, size = "md", online, ring, className }: AvatarProps) {
-  const initials = name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
+  ({ name, gradient, size = "md", online, ring, className }, ref) => {
+    const initials = name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
 
-  return (
-    <div className={cn("relative inline-flex shrink-0", className)}>
-      <div
-        className={cn(
-          "rounded-full bg-gradient-to-br flex items-center justify-center font-display font-bold text-white shadow-soft",
-          sizeMap[size],
-          gradient,
-          ring && "ring-2 ring-background ring-offset-2 ring-offset-primary"
-        )}
-      >
-        {initials}
-      </div>
-      {online && (
-        <span
+    return (
+      <div ref={ref} className={cn("relative inline-flex shrink-0", className)}>
+        <div
           className={cn(
-            "absolute bottom-0 right-0 rounded-full bg-success ring-2 ring-background",
-            dotMap[size]
+            "rounded-full bg-gradient-to-br flex items-center justify-center font-display font-bold text-white shadow-soft",
+            sizeMap[size],
+            gradient,
+            ring && "ring-2 ring-background ring-offset-2 ring-offset-primary",
           )}
-        />
-      )}
-    </div>
-  );
-}
+        >
+          {initials}
+        </div>
+        {online && (
+          <span
+            className={cn(
+              "absolute bottom-0 right-0 rounded-full bg-success ring-2 ring-background",
+              dotMap[size],
+            )}
+          />
+        )}
+      </div>
+    );
+  },
+);
+Avatar.displayName = "Avatar";
