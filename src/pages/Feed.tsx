@@ -4,6 +4,7 @@ import { posts } from "@/lib/mock-data";
 import { Heart, MessageCircle, Share2, Music2, Search, Plus, Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
+import { SectionErrorBoundary } from "@/components/SectionErrorBoundary";
 
 function formatN(n: number) {
   if (n >= 1000) return (n / 1000).toFixed(1).replace(".0", "") + "K";
