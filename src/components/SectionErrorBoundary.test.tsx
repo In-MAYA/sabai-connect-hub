@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { SectionErrorBoundary } from "./SectionErrorBoundary";
 
-function Boom({ message = "boom" }: { message?: string }) {
+function Boom({ message = "boom" }: { message?: string }): JSX.Element {
   throw new Error(message);
 }
 
