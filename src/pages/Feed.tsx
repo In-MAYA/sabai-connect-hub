@@ -36,6 +36,7 @@ export default function Feed() {
         </div>
       </div>
 
+      <SectionErrorBoundary name="FeedList">
       <div className="snap-y snap-mandatory overflow-y-auto h-[calc(100vh)] no-scrollbar">
         {posts.map((p) => (
           <div key={p.id} className="snap-start relative h-[calc(100vh)] w-full overflow-hidden">
