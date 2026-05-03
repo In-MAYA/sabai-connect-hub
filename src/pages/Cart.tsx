@@ -5,6 +5,7 @@ import { Avatar } from "@/components/Avatar";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n";
+import { SectionErrorBoundary } from "@/components/SectionErrorBoundary";
 
 const initial = [
   { ...products[0], qty: 1, selected: true },
