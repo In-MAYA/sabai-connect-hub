@@ -68,6 +68,7 @@ export default function Chats() {
       </div>
 
       {/* Chat list */}
+      <SectionErrorBoundary name="ChatList">
       <div className="mt-1">
         {chats.map((c) => {
           const lastKey = `chats.last.${c.id}`;
@@ -117,6 +118,7 @@ export default function Chats() {
           );
         })}
       </div>
+      </SectionErrorBoundary>
     </div>
   );
 }
