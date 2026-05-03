@@ -70,6 +70,7 @@ export default function Shop() {
       </div>
 
       {/* Products grid */}
+      <SectionErrorBoundary name="ProductList">
       <div className="px-4 mt-5 grid grid-cols-2 gap-3">
         {products.map((p) => (
           <Link key={p.id} to={`/product/${p.id}`} className="group">
@@ -101,6 +102,7 @@ export default function Shop() {
           </Link>
         ))}
       </div>
+      </SectionErrorBoundary>
     </div>
   );
 }
