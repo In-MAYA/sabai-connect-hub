@@ -5,6 +5,7 @@ import { Avatar } from "@/components/Avatar";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n";
+import { SectionErrorBoundary } from "@/components/SectionErrorBoundary";
 
 const initial = [
   { ...products[0], qty: 1, selected: true },
@@ -24,6 +25,7 @@ export default function Cart() {
     <div>
       <PageHeader title={t("cart.title")} back subtitle={t("cart.items", { n: items.length })} />
 
+      <SectionErrorBoundary name="CartItems">
       <div className="px-4 pt-3 space-y-3 pb-32">
         {items.map((it) => (
           <div key={it.id} className="bg-card rounded-2xl p-3 border border-border shadow-soft">
@@ -67,6 +69,7 @@ export default function Cart() {
           </div>
         ))}
       </div>
+      </SectionErrorBoundary>
 
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[440px] bg-background/95 backdrop-blur-xl border-t border-border px-4 py-3 safe-bottom z-40">
         <div className="flex items-center justify-between mb-2">

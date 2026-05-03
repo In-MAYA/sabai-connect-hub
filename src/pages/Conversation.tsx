@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { SectionErrorBoundary } from "@/components/SectionErrorBoundary";
 
 const formatTime = (d: Date) =>
   d.toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit", hour12: false });
@@ -264,6 +265,7 @@ export default function Conversation() {
       </header>
 
       {/* Messages */}
+      <SectionErrorBoundary name="MessageList" className="flex-1">
       <div ref={scrollerRef} className="flex-1 px-3 py-4 space-y-2 overflow-y-auto">
         <div className="text-center">
           <span className="text-[11px] text-muted-foreground bg-background/60 px-3 py-1 rounded-full">วันนี้</span>
@@ -460,8 +462,8 @@ export default function Conversation() {
           </div>
         )}
       </div>
+      </SectionErrorBoundary>
 
-      {/* Attachment sheet */}
       {attachOpen && (
         <div
           className="fixed inset-0 z-40 bg-foreground/30 backdrop-blur-sm animate-fade-in"
@@ -553,7 +555,8 @@ export default function Conversation() {
         onChange={(e) => onPickFiles(e, "file")}
       />
 
-      {/* Input bar */}
+      {/* Input bar (Composer) */}
+      <SectionErrorBoundary name="Composer">
       <div className="bg-background/95 backdrop-blur-xl border-t border-border px-3 py-2.5 safe-bottom">
         {iAmTyping && (
           <p className="text-[10px] text-muted-foreground px-2 pb-1">กำลังพิมพ์...</p>
@@ -602,6 +605,7 @@ export default function Conversation() {
           )}
         </div>
       </div>
+      </SectionErrorBoundary>
     </div>
   );
 }

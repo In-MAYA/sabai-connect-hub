@@ -5,6 +5,7 @@ import { chats, stories } from "@/lib/mock-data";
 import { Search, Edit3, Pin, CheckCheck, Plus, UserPlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useI18n } from "@/lib/i18n";
+import { SectionErrorBoundary } from "@/components/SectionErrorBoundary";
 
 export default function Chats() {
   const { t } = useI18n();
@@ -67,6 +68,7 @@ export default function Chats() {
       </div>
 
       {/* Chat list */}
+      <SectionErrorBoundary name="ChatList">
       <div className="mt-1">
         {chats.map((c) => {
           const lastKey = `chats.last.${c.id}`;
@@ -116,6 +118,7 @@ export default function Chats() {
           );
         })}
       </div>
+      </SectionErrorBoundary>
     </div>
   );
 }

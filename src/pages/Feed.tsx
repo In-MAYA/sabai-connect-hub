@@ -4,6 +4,7 @@ import { posts } from "@/lib/mock-data";
 import { Heart, MessageCircle, Share2, Music2, Search, Plus, Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
+import { SectionErrorBoundary } from "@/components/SectionErrorBoundary";
 
 function formatN(n: number) {
   if (n >= 1000) return (n / 1000).toFixed(1).replace(".0", "") + "K";
@@ -35,6 +36,7 @@ export default function Feed() {
         </div>
       </div>
 
+      <SectionErrorBoundary name="FeedList">
       <div className="snap-y snap-mandatory overflow-y-auto h-[calc(100vh)] no-scrollbar">
         {posts.map((p) => (
           <div key={p.id} className="snap-start relative h-[calc(100vh)] w-full overflow-hidden">
@@ -100,6 +102,7 @@ export default function Feed() {
           </div>
         ))}
       </div>
+      </SectionErrorBoundary>
     </div>
   );
 }

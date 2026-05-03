@@ -5,6 +5,7 @@ import { Search, ShoppingCart, Heart, Star, Flame } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
+import { SectionErrorBoundary } from "@/components/SectionErrorBoundary";
 
 export default function Shop() {
   const { t } = useI18n();
@@ -69,6 +70,7 @@ export default function Shop() {
       </div>
 
       {/* Products grid */}
+      <SectionErrorBoundary name="ProductList">
       <div className="px-4 mt-5 grid grid-cols-2 gap-3">
         {products.map((p) => (
           <Link key={p.id} to={`/product/${p.id}`} className="group">
@@ -100,6 +102,7 @@ export default function Shop() {
           </Link>
         ))}
       </div>
+      </SectionErrorBoundary>
     </div>
   );
 }
