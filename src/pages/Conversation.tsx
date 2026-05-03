@@ -555,7 +555,8 @@ export default function Conversation() {
         onChange={(e) => onPickFiles(e, "file")}
       />
 
-      {/* Input bar */}
+      {/* Input bar (Composer) */}
+      <SectionErrorBoundary name="Composer">
       <div className="bg-background/95 backdrop-blur-xl border-t border-border px-3 py-2.5 safe-bottom">
         {iAmTyping && (
           <p className="text-[10px] text-muted-foreground px-2 pb-1">กำลังพิมพ์...</p>
@@ -604,6 +605,7 @@ export default function Conversation() {
           )}
         </div>
       </div>
+      </SectionErrorBoundary>
     </div>
   );
 }
