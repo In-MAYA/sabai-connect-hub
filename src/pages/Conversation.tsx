@@ -462,8 +462,8 @@ export default function Conversation() {
           </div>
         )}
       </div>
+      </SectionErrorBoundary>
 
-      {/* Attachment sheet */}
       {attachOpen && (
         <div
           className="fixed inset-0 z-40 bg-foreground/30 backdrop-blur-sm animate-fade-in"
