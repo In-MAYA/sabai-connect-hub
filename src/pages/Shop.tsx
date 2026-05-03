@@ -5,6 +5,7 @@ import { Search, ShoppingCart, Heart, Star, Flame } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
+import { SectionErrorBoundary } from "@/components/SectionErrorBoundary";
 
 export default function Shop() {
   const { t } = useI18n();
