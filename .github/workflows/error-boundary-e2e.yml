@@ -1,0 +1,37 @@
+name: Error Boundary E2E (prod mode)
+
+# Runs the production-mode E2E tests that assert error boundaries never leak
+# raw error messages / stack traces into the UI, while still logging via
+# console.error. This job MUST stay green — failures here mean a regression
+# could expose internal error details to end users.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  error-boundary-e2e:
+    name: Run prod-mode error boundary tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run production-mode error boundary tests
+        run: |
+          bunx vitest run \
+            src/components/ErrorBoundary.prod.test.tsx \
+            src/components/ErrorBoundary.e2e.prod.test.tsx \
+            --reporter=verbose
