@@ -55,9 +55,15 @@ export class SectionErrorBoundary extends Component<Props, State> {
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold">โหลดส่วนนี้ไม่สำเร็จ</p>
-          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2 break-words">
-            {this.state.error?.message ?? "Unknown error"}
-          </p>
+          {import.meta.env.DEV ? (
+            <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2 break-words">
+              {this.state.error?.message ?? "Unknown error"}
+            </p>
+          ) : (
+            <p className="text-xs text-muted-foreground mt-0.5">
+              กรุณาลองใหม่อีกครั้ง
+            </p>
+          )}
           <button
             onClick={this.reset}
             className="mt-2 inline-flex items-center gap-1 h-8 px-3 rounded-full bg-background border border-border text-xs font-semibold hover:bg-muted transition-smooth"
