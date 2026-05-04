@@ -155,23 +155,6 @@ export default function Auth() {
             </p>
           )}
 
-          <div className="flex items-center gap-3 py-2">
-            <div className="h-px bg-border flex-1" />
-            <span className="text-xs text-muted-foreground">{t("auth.or")}</span>
-            <div className="h-px bg-border flex-1" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <Button variant="outline" className="h-12 rounded-2xl font-semibold" onClick={() => navigate("/setup-profile")}>
-              <svg className="h-5 w-5 mr-1" viewBox="0 0 24 24"><path fill="#4285F4" d="M21.35 11.1H12v3.2h5.35c-.23 1.5-1.7 4.4-5.35 4.4-3.22 0-5.85-2.66-5.85-5.95s2.63-5.95 5.85-5.95c1.83 0 3.06.78 3.76 1.45l2.57-2.47C16.74 4.31 14.6 3.4 12 3.4 7.03 3.4 3 7.43 3 12.4s4.03 9 9 9c5.2 0 8.64-3.65 8.64-8.79 0-.59-.07-1.05-.15-1.51z"/></svg>
-              Google
-            </Button>
-            <Button variant="outline" className="h-12 rounded-2xl font-semibold" onClick={() => navigate("/setup-profile")}>
-              <svg className="h-5 w-5 mr-1" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 12.04c-.03-2.85 2.32-4.22 2.42-4.29-1.32-1.93-3.38-2.2-4.11-2.23-1.75-.18-3.42 1.03-4.31 1.03-.9 0-2.27-1-3.73-.97-1.92.03-3.69 1.12-4.68 2.83-2 3.46-.51 8.59 1.43 11.4.95 1.38 2.07 2.93 3.54 2.87 1.42-.06 1.96-.92 3.68-.92s2.21.92 3.72.89c1.54-.03 2.51-1.4 3.45-2.79 1.09-1.6 1.54-3.15 1.57-3.23-.03-.02-3.01-1.16-3.04-4.59zM14.1 4.05c.78-.95 1.31-2.27 1.16-3.58-1.13.05-2.49.75-3.3 1.7-.72.84-1.36 2.18-1.19 3.47 1.26.1 2.55-.64 3.33-1.59z"/></svg>
-              Apple
-            </Button>
-          </div>
-
           <div className="flex items-start gap-2 mt-4 px-1">
             <ShieldCheck className="h-4 w-4 text-primary shrink-0 mt-0.5" />
             <p className="text-[11px] text-muted-foreground leading-relaxed">
