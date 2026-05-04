@@ -11,15 +11,19 @@ function Boom({ message = "secret-internal-detail" }: { message?: string }): JSX
 describe("Boundaries in production mode", () => {
   let errorSpy: ReturnType<typeof vi.spyOn>;
 
+  const originalDev = import.meta.env.DEV;
+  const originalProd = import.meta.env.PROD;
+
   beforeEach(() => {
     errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    vi.stubEnv("DEV", "" as unknown as string); // import.meta.env.DEV -> false
-    vi.stubEnv("PROD", "1" as unknown as string);
+    (import.meta.env as { DEV: boolean }).DEV = false;
+    (import.meta.env as { PROD: boolean }).PROD = true;
   });
 
   afterEach(() => {
     errorSpy.mockRestore();
-    vi.unstubAllEnvs();
+    (import.meta.env as { DEV: boolean }).DEV = originalDev;
+    (import.meta.env as { PROD: boolean }).PROD = originalProd;
   });
 
   it("ErrorBoundary does not expose error message in the UI but still logs it", () => {
