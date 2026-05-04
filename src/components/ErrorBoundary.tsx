@@ -39,6 +39,7 @@ export class ErrorBoundary extends Component<Props, State> {
     if (!this.state.hasError) return this.props.children;
     if (this.props.fallback) return this.props.fallback;
 
+    const isDev = import.meta.env.DEV;
     const message = this.state.error?.message ?? "Unknown error";
 
     return (
@@ -52,14 +53,16 @@ export class ErrorBoundary extends Component<Props, State> {
             มีบางอย่างผิดพลาด ลองรีเฟรชหน้าหรือกลับไปหน้าหลัก
           </p>
 
-          <details className="mt-4 w-full text-left">
-            <summary className="text-[11px] text-muted-foreground cursor-pointer select-none">
-              รายละเอียด
-            </summary>
-            <pre className="mt-2 text-[11px] font-mono bg-muted/60 rounded-xl p-3 overflow-auto max-h-40 whitespace-pre-wrap break-words">
-              {message}
-            </pre>
-          </details>
+          {isDev && (
+            <details className="mt-4 w-full text-left">
+              <summary className="text-[11px] text-muted-foreground cursor-pointer select-none">
+                รายละเอียด (dev)
+              </summary>
+              <pre className="mt-2 text-[11px] font-mono bg-muted/60 rounded-xl p-3 overflow-auto max-h-40 whitespace-pre-wrap break-words">
+                {message}
+              </pre>
+            </details>
+          )}
 
           <div className="mt-6 w-full grid grid-cols-2 gap-2">
             <Button
