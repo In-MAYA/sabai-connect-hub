@@ -11,6 +11,10 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   error-boundary-e2e:
     name: Run prod-mode error boundary tests
