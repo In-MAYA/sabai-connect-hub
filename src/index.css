@@ -175,6 +175,8 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none;
   }
 
   html[lang="lo"],
@@ -190,8 +192,6 @@
   html[lang="lo"] textarea,
   html[lang="lo"] select {
     font-family: 'Phetsarath OT', 'Noto Sans Lao', 'Plus Jakarta Sans', system-ui, sans-serif !important;
-    -webkit-tap-highlight-color: transparent;
-    overscroll-behavior-y: none;
   }
 
   h1, h2, h3, h4 {
