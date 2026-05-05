@@ -1,4 +1,22 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&family=Noto+Sans+Lao:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Phetsarath:wght@400;700&display=swap');
+
+@font-face {
+  font-family: 'Phetsarath OT';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Phetsarath OT'), local('Phetsarath'),
+       url('https://fonts.lao.gov.la/PhetsarathOT.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Phetsarath OT';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Phetsarath OT Bold'), local('Phetsarath Bold'),
+       url('https://fonts.lao.gov.la/PhetsarathOT-Bold.ttf') format('truetype');
+}
 
 @tailwind base;
 @tailwind components;
@@ -159,6 +177,21 @@
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
     -webkit-tap-highlight-color: transparent;
     overscroll-behavior-y: none;
+  }
+
+  html[lang="lo"],
+  html[lang="lo"] body,
+  html[lang="lo"] h1,
+  html[lang="lo"] h2,
+  html[lang="lo"] h3,
+  html[lang="lo"] h4,
+  html[lang="lo"] h5,
+  html[lang="lo"] h6,
+  html[lang="lo"] button,
+  html[lang="lo"] input,
+  html[lang="lo"] textarea,
+  html[lang="lo"] select {
+    font-family: 'Phetsarath OT', 'Noto Sans Lao', 'Plus Jakarta Sans', system-ui, sans-serif !important;
   }
 
   h1, h2, h3, h4 {
