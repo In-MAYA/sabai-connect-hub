@@ -175,6 +175,21 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+
+  html[lang="lo"],
+  html[lang="lo"] body,
+  html[lang="lo"] h1,
+  html[lang="lo"] h2,
+  html[lang="lo"] h3,
+  html[lang="lo"] h4,
+  html[lang="lo"] h5,
+  html[lang="lo"] h6,
+  html[lang="lo"] button,
+  html[lang="lo"] input,
+  html[lang="lo"] textarea,
+  html[lang="lo"] select {
+    font-family: 'Phetsarath OT', 'Noto Sans Lao', 'Plus Jakarta Sans', system-ui, sans-serif !important;
     -webkit-tap-highlight-color: transparent;
     overscroll-behavior-y: none;
   }
