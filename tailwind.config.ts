@@ -12,8 +12,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["'Plus Jakarta Sans'", "system-ui", "sans-serif"],
-        display: ["'Sora'", "'Plus Jakarta Sans'", "sans-serif"],
+        sans: ["'Montserrat'", "system-ui", "sans-serif"],
+        display: ["'Montserrat'", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
