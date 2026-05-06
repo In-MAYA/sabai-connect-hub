@@ -179,20 +179,15 @@
     overscroll-behavior-y: none;
   }
 
+  /* Force Lao font on every element when language is Lao,
+     including elements using Tailwind utilities like font-display / font-sans / font-mono. */
   html[lang="lo"],
-  html[lang="lo"] body,
-  html[lang="lo"] h1,
-  html[lang="lo"] h2,
-  html[lang="lo"] h3,
-  html[lang="lo"] h4,
-  html[lang="lo"] h5,
-  html[lang="lo"] h6,
-  html[lang="lo"] button,
-  html[lang="lo"] input,
-  html[lang="lo"] textarea,
-  html[lang="lo"] select {
+  html[lang="lo"] *:not(.allow-latin-font):not(svg):not(svg *) {
     font-family: 'Phetsarath OT', 'Noto Sans Lao', 'Montserrat', system-ui, sans-serif !important;
   }
+
+  /* Keep monospace numerals readable in Lao too — Phetsarath supports digits,
+     but allow opting out for code blocks via .allow-latin-font. */
 
   h1, h2, h3, h4 {
     font-family: 'Montserrat', sans-serif;
