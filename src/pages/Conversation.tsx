@@ -273,7 +273,7 @@ export default function Conversation() {
       <SectionErrorBoundary name="MessageList" className="flex-1">
       <div ref={scrollerRef} className="flex-1 px-3 py-4 space-y-2 overflow-y-auto">
         <div className="text-center">
-          <span className="text-[11px] text-muted-foreground bg-background/60 px-3 py-1 rounded-full">วันนี้</span>
+          <span className="text-[11px] text-muted-foreground bg-background/60 px-3 py-1 rounded-full">{t("convo.today")}</span>
         </div>
 
         {isNewGroup && msgs.length === 0 && (
