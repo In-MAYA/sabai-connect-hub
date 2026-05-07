@@ -350,7 +350,7 @@ export default function Conversation() {
                         <div className="w-32 h-1.5 rounded-full bg-white/30 overflow-hidden">
                           <div className="h-full bg-white transition-all" style={{ width: `${m.uploadProgress}%` }} />
                         </div>
-                        <span className="text-xs font-semibold text-white">กำลังอัปโหลด {m.uploadProgress}%</span>
+                        <span className="text-xs font-semibold text-white">{t("convo.uploading", { n: m.uploadProgress ?? 0 })}</span>
                       </div>
                     )}
                     <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-black/60 text-white text-[10px] font-medium flex items-center gap-1">
@@ -444,7 +444,7 @@ export default function Conversation() {
                 <div className={cn("flex items-center gap-1 mt-0.5 px-1", me ? "flex-row-reverse" : "")}>
                   <span className="text-[10px] text-muted-foreground">{m.time}</span>
                   {me && uploading && (
-                    <span className="text-[10px] text-muted-foreground">กำลังอัปโหลด...</span>
+                    <span className="text-[10px] text-muted-foreground">{t("convo.uploadingShort")}</span>
                   )}
                   {me && !uploading && m.status === "sent" && <Check className="h-3 w-3 text-muted-foreground" />}
                   {me && !uploading && m.status === "delivered" && <CheckCheck className="h-3 w-3 text-muted-foreground" />}
@@ -479,7 +479,7 @@ export default function Conversation() {
             className="absolute bottom-0 inset-x-0 bg-background rounded-t-3xl shadow-glow border-t border-border p-5 safe-bottom animate-slide-up"
           >
             <div className="w-12 h-1.5 bg-muted rounded-full mx-auto mb-4" />
-            <h3 className="text-sm font-semibold text-center mb-4">แนบไฟล์</h3>
+            <h3 className="text-sm font-semibold text-center mb-4">{t("convo.attach.title")}</h3>
             <div className="grid grid-cols-3 gap-3">
               <button
                 onClick={() => imageInputRef.current?.click()}
@@ -488,7 +488,7 @@ export default function Conversation() {
                 <div className="h-12 w-12 rounded-2xl bg-gradient-primary text-primary-foreground flex items-center justify-center shadow-glow">
                   <ImageIcon className="h-6 w-6" />
                 </div>
-                <span className="text-xs font-medium">รูปภาพ</span>
+                <span className="text-xs font-medium">{t("convo.attach.image")}</span>
               </button>
               <button
                 onClick={() => videoInputRef.current?.click()}
@@ -497,7 +497,7 @@ export default function Conversation() {
                 <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-500 text-white flex items-center justify-center shadow-soft">
                   <Film className="h-6 w-6" />
                 </div>
-                <span className="text-xs font-medium">วิดีโอ</span>
+                <span className="text-xs font-medium">{t("convo.attach.video")}</span>
               </button>
               <button
                 onClick={() => fileInputRef.current?.click()}
@@ -506,14 +506,14 @@ export default function Conversation() {
                 <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white flex items-center justify-center shadow-soft">
                   <FileText className="h-6 w-6" />
                 </div>
-                <span className="text-xs font-medium">ไฟล์</span>
+                <span className="text-xs font-medium">{t("convo.attach.file")}</span>
               </button>
             </div>
             <button
               onClick={() => setAttachOpen(false)}
               className="mt-4 w-full h-11 rounded-2xl bg-muted text-foreground font-semibold text-sm"
             >
-              ยกเลิก
+              {t("common.cancel")}
             </button>
           </div>
         </div>
@@ -564,12 +564,12 @@ export default function Conversation() {
       <SectionErrorBoundary name="Composer">
       <div className="bg-background/95 backdrop-blur-xl border-t border-border px-3 py-2.5 safe-bottom">
         {iAmTyping && (
-          <p className="text-[10px] text-muted-foreground px-2 pb-1">กำลังพิมพ์...</p>
+          <p className="text-[10px] text-muted-foreground px-2 pb-1">{t("convo.typing")}</p>
         )}
         <div className="flex items-end gap-2">
           <button
             onClick={() => setAttachOpen(true)}
-            aria-label="แนบไฟล์"
+            aria-label={t("convo.attach.aria")}
             className={cn(
               "h-10 w-10 rounded-full flex items-center justify-center shrink-0 transition-transform active:scale-95",
               attachOpen ? "bg-gradient-primary text-primary-foreground rotate-45" : "bg-primary/10 text-primary",
@@ -582,7 +582,7 @@ export default function Conversation() {
               value={draft}
               onChange={(e) => handleDraftChange(e.target.value)}
               onKeyDown={onKeyDown}
-              placeholder="พิมพ์ข้อความ..."
+              placeholder={t("convo.placeholder")}
               className="border-0 bg-transparent p-0 h-8 focus-visible:ring-0 text-base"
             />
             <button className="h-8 w-8 rounded-full hover:bg-background/60 flex items-center justify-center text-muted-foreground">
@@ -598,7 +598,7 @@ export default function Conversation() {
           {draft.trim() ? (
             <button
               onClick={sendMessage}
-              aria-label="ส่งข้อความ"
+              aria-label={t("convo.send.aria")}
               className="h-10 w-10 rounded-full bg-gradient-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-glow active:scale-95 transition-transform"
             >
               <Send className="h-4 w-4" />
