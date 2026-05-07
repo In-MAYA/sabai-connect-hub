@@ -126,8 +126,8 @@ export default function Conversation() {
         const reply: Message = {
           id: `m_${Date.now()}_r`,
           senderId: replierUser.id,
-          text: autoReplies[Math.floor(Math.random() * autoReplies.length)],
-          time: formatTime(new Date()),
+          text: randomReply(),
+          time: formatTime(new Date(), lang),
         };
         setMsgs((prev) => [...prev, reply]);
       }, 2400 + Math.random() * 1200);
@@ -140,8 +140,8 @@ export default function Conversation() {
       const reply: Message = {
         id: `m_${Date.now()}_r`,
         senderId: chat.user.id,
-        text: autoReplies[Math.floor(Math.random() * autoReplies.length)],
-        time: formatTime(new Date()),
+        text: randomReply(),
+        time: formatTime(new Date(), lang),
       };
       setMsgs((prev) => [...prev, reply]);
     }, 2400 + Math.random() * 1200);
@@ -160,7 +160,7 @@ export default function Conversation() {
     const text = draft.trim();
     if (!text) return;
     const id = `m_${Date.now()}`;
-    const newMsg: Message = { id, senderId: "me", text, time: formatTime(new Date()), status: "sent" };
+    const newMsg: Message = { id, senderId: "me", text, time: formatTime(new Date(), lang), status: "sent" };
     setMsgs((prev) => [...prev, newMsg]);
     setDraft("");
     setIAmTyping(false);
@@ -185,7 +185,7 @@ export default function Conversation() {
       senderId: "me",
       attachment,
       uploadProgress: 0,
-      time: formatTime(new Date()),
+      time: formatTime(new Date(), lang),
       status: "sent",
     };
     setMsgs((prev) => [...prev, newMsg]);
