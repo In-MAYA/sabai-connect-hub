@@ -9,9 +9,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { SectionErrorBoundary } from "@/components/SectionErrorBoundary";
+import { useI18n, type Lang } from "@/lib/i18n";
 
-const formatTime = (d: Date) =>
-  d.toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit", hour12: false });
+const localeMap: Record<Lang, string> = { lo: "lo-LA", th: "th-TH", en: "en-US", zh: "zh-CN" };
+
+const formatTime = (d: Date, lang: Lang) =>
+  d.toLocaleTimeString(localeMap[lang] ?? "en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
 
 const formatBytes = (bytes?: number) => {
   if (!bytes && bytes !== 0) return "";
@@ -20,9 +23,9 @@ const formatBytes = (bytes?: number) => {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
 
-const autoReplies = [
-  "โอเคเลย! 👍", "เดี๋ยวคุยกันต่อนะ 😊", "ฮะๆ จริงป่ะ 😆", "เห็นด้วยเลย",
-  "แล้วจะส่งให้นะ ✨", "น่าสนใจมาก เล่าต่อสิ", "ขอเวลาคิดแป๊บนึง 🤔", "เยี่ยมเลย! 💙",
+const REPLY_KEYS = [
+  "convo.reply.0", "convo.reply.1", "convo.reply.2", "convo.reply.3",
+  "convo.reply.4", "convo.reply.5", "convo.reply.6", "convo.reply.7",
 ];
 
 type AttachKind = "image" | "video" | "file";
@@ -33,7 +36,9 @@ export default function Conversation() {
   const { id = "c1" } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { t, lang } = useI18n();
   const groupState = (location.state || {}) as GroupState;
+  const randomReply = () => t(REPLY_KEYS[Math.floor(Math.random() * REPLY_KEYS.length)]);
 
   const chat = useMemo<Chat>(() => {
     const found = chats.find((c) => c.id === id);
@@ -121,8 +126,8 @@ export default function Conversation() {
         const reply: Message = {
           id: `m_${Date.now()}_r`,
           senderId: replierUser.id,
-          text: autoReplies[Math.floor(Math.random() * autoReplies.length)],
-          time: formatTime(new Date()),
+          text: randomReply(),
+          time: formatTime(new Date(), lang),
         };
         setMsgs((prev) => [...prev, reply]);
       }, 2400 + Math.random() * 1200);
@@ -135,8 +140,8 @@ export default function Conversation() {
       const reply: Message = {
         id: `m_${Date.now()}_r`,
         senderId: chat.user.id,
-        text: autoReplies[Math.floor(Math.random() * autoReplies.length)],
-        time: formatTime(new Date()),
+        text: randomReply(),
+        time: formatTime(new Date(), lang),
       };
       setMsgs((prev) => [...prev, reply]);
     }, 2400 + Math.random() * 1200);
@@ -155,7 +160,7 @@ export default function Conversation() {
     const text = draft.trim();
     if (!text) return;
     const id = `m_${Date.now()}`;
-    const newMsg: Message = { id, senderId: "me", text, time: formatTime(new Date()), status: "sent" };
+    const newMsg: Message = { id, senderId: "me", text, time: formatTime(new Date(), lang), status: "sent" };
     setMsgs((prev) => [...prev, newMsg]);
     setDraft("");
     setIAmTyping(false);
@@ -180,7 +185,7 @@ export default function Conversation() {
       senderId: "me",
       attachment,
       uploadProgress: 0,
-      time: formatTime(new Date()),
+      time: formatTime(new Date(), lang),
       status: "sent",
     };
     setMsgs((prev) => [...prev, newMsg]);
@@ -242,16 +247,16 @@ export default function Conversation() {
                     <span className="h-1 w-1 rounded-full bg-primary animate-typing" style={{ animationDelay: "150ms" }} />
                     <span className="h-1 w-1 rounded-full bg-primary animate-typing" style={{ animationDelay: "300ms" }} />
                   </span>
-                  กำลังพิมพ์...
+                  {t("convo.typing")}
                 </span>
               ) : chat.isGroup ? (
-                <span className="text-muted-foreground">{chat.members ?? 0} สมาชิก</span>
+                <span className="text-muted-foreground">{t("convo.members", { n: chat.members ?? 0 })}</span>
               ) : chat.user.online ? (
                 <span className="text-success flex items-center gap-1">
-                  <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />ออนไลน์
+                  <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />{t("convo.online")}
                 </span>
               ) : (
-                <span className="text-muted-foreground">ออนไลน์ล่าสุด 2 ชม.</span>
+                <span className="text-muted-foreground">{t("convo.lastSeen")}</span>
               )}
             </p>
           </div>
@@ -268,7 +273,7 @@ export default function Conversation() {
       <SectionErrorBoundary name="MessageList" className="flex-1">
       <div ref={scrollerRef} className="flex-1 px-3 py-4 space-y-2 overflow-y-auto">
         <div className="text-center">
-          <span className="text-[11px] text-muted-foreground bg-background/60 px-3 py-1 rounded-full">วันนี้</span>
+          <span className="text-[11px] text-muted-foreground bg-background/60 px-3 py-1 rounded-full">{t("convo.today")}</span>
         </div>
 
         {isNewGroup && msgs.length === 0 && (
@@ -278,10 +283,10 @@ export default function Conversation() {
             </div>
             <h3 className="font-display font-bold text-base">{chat.user.name}</h3>
             <p className="text-xs text-muted-foreground mt-1">
-              สร้างกลุ่มแล้ว · {chat.members} สมาชิก
+              {t("convo.groupCreatedMembers", { n: chat.members ?? 0 })}
             </p>
             <p className="text-xs text-muted-foreground mt-3 max-w-[240px]">
-              ส่งข้อความแรกเพื่อเริ่มสนทนา 👋
+              {t("convo.firstMessage")}
             </p>
           </div>
         )}
@@ -345,7 +350,7 @@ export default function Conversation() {
                         <div className="w-32 h-1.5 rounded-full bg-white/30 overflow-hidden">
                           <div className="h-full bg-white transition-all" style={{ width: `${m.uploadProgress}%` }} />
                         </div>
-                        <span className="text-xs font-semibold text-white">กำลังอัปโหลด {m.uploadProgress}%</span>
+                        <span className="text-xs font-semibold text-white">{t("convo.uploading", { n: m.uploadProgress ?? 0 })}</span>
                       </div>
                     )}
                     <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-black/60 text-white text-[10px] font-medium flex items-center gap-1">
@@ -439,7 +444,7 @@ export default function Conversation() {
                 <div className={cn("flex items-center gap-1 mt-0.5 px-1", me ? "flex-row-reverse" : "")}>
                   <span className="text-[10px] text-muted-foreground">{m.time}</span>
                   {me && uploading && (
-                    <span className="text-[10px] text-muted-foreground">กำลังอัปโหลด...</span>
+                    <span className="text-[10px] text-muted-foreground">{t("convo.uploadingShort")}</span>
                   )}
                   {me && !uploading && m.status === "sent" && <Check className="h-3 w-3 text-muted-foreground" />}
                   {me && !uploading && m.status === "delivered" && <CheckCheck className="h-3 w-3 text-muted-foreground" />}
@@ -474,7 +479,7 @@ export default function Conversation() {
             className="absolute bottom-0 inset-x-0 bg-background rounded-t-3xl shadow-glow border-t border-border p-5 safe-bottom animate-slide-up"
           >
             <div className="w-12 h-1.5 bg-muted rounded-full mx-auto mb-4" />
-            <h3 className="text-sm font-semibold text-center mb-4">แนบไฟล์</h3>
+            <h3 className="text-sm font-semibold text-center mb-4">{t("convo.attach.title")}</h3>
             <div className="grid grid-cols-3 gap-3">
               <button
                 onClick={() => imageInputRef.current?.click()}
@@ -483,7 +488,7 @@ export default function Conversation() {
                 <div className="h-12 w-12 rounded-2xl bg-gradient-primary text-primary-foreground flex items-center justify-center shadow-glow">
                   <ImageIcon className="h-6 w-6" />
                 </div>
-                <span className="text-xs font-medium">รูปภาพ</span>
+                <span className="text-xs font-medium">{t("convo.attach.image")}</span>
               </button>
               <button
                 onClick={() => videoInputRef.current?.click()}
@@ -492,7 +497,7 @@ export default function Conversation() {
                 <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-500 text-white flex items-center justify-center shadow-soft">
                   <Film className="h-6 w-6" />
                 </div>
-                <span className="text-xs font-medium">วิดีโอ</span>
+                <span className="text-xs font-medium">{t("convo.attach.video")}</span>
               </button>
               <button
                 onClick={() => fileInputRef.current?.click()}
@@ -501,14 +506,14 @@ export default function Conversation() {
                 <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white flex items-center justify-center shadow-soft">
                   <FileText className="h-6 w-6" />
                 </div>
-                <span className="text-xs font-medium">ไฟล์</span>
+                <span className="text-xs font-medium">{t("convo.attach.file")}</span>
               </button>
             </div>
             <button
               onClick={() => setAttachOpen(false)}
               className="mt-4 w-full h-11 rounded-2xl bg-muted text-foreground font-semibold text-sm"
             >
-              ยกเลิก
+              {t("common.cancel")}
             </button>
           </div>
         </div>
@@ -559,12 +564,12 @@ export default function Conversation() {
       <SectionErrorBoundary name="Composer">
       <div className="bg-background/95 backdrop-blur-xl border-t border-border px-3 py-2.5 safe-bottom">
         {iAmTyping && (
-          <p className="text-[10px] text-muted-foreground px-2 pb-1">กำลังพิมพ์...</p>
+          <p className="text-[10px] text-muted-foreground px-2 pb-1">{t("convo.typing")}</p>
         )}
         <div className="flex items-end gap-2">
           <button
             onClick={() => setAttachOpen(true)}
-            aria-label="แนบไฟล์"
+            aria-label={t("convo.attach.aria")}
             className={cn(
               "h-10 w-10 rounded-full flex items-center justify-center shrink-0 transition-transform active:scale-95",
               attachOpen ? "bg-gradient-primary text-primary-foreground rotate-45" : "bg-primary/10 text-primary",
@@ -577,7 +582,7 @@ export default function Conversation() {
               value={draft}
               onChange={(e) => handleDraftChange(e.target.value)}
               onKeyDown={onKeyDown}
-              placeholder="พิมพ์ข้อความ..."
+              placeholder={t("convo.placeholder")}
               className="border-0 bg-transparent p-0 h-8 focus-visible:ring-0 text-base"
             />
             <button className="h-8 w-8 rounded-full hover:bg-background/60 flex items-center justify-center text-muted-foreground">
@@ -593,7 +598,7 @@ export default function Conversation() {
           {draft.trim() ? (
             <button
               onClick={sendMessage}
-              aria-label="ส่งข้อความ"
+              aria-label={t("convo.send.aria")}
               className="h-10 w-10 rounded-full bg-gradient-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-glow active:scale-95 transition-transform"
             >
               <Send className="h-4 w-4" />
