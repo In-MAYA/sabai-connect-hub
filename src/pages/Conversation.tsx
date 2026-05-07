@@ -36,7 +36,9 @@ export default function Conversation() {
   const { id = "c1" } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { t, lang } = useI18n();
   const groupState = (location.state || {}) as GroupState;
+  const randomReply = () => t(REPLY_KEYS[Math.floor(Math.random() * REPLY_KEYS.length)]);
 
   const chat = useMemo<Chat>(() => {
     const found = chats.find((c) => c.id === id);
