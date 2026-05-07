@@ -9,9 +9,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { SectionErrorBoundary } from "@/components/SectionErrorBoundary";
+import { useI18n, type Lang } from "@/lib/i18n";
 
-const formatTime = (d: Date) =>
-  d.toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit", hour12: false });
+const localeMap: Record<Lang, string> = { lo: "lo-LA", th: "th-TH", en: "en-US", zh: "zh-CN" };
+
+const formatTime = (d: Date, lang: Lang) =>
+  d.toLocaleTimeString(localeMap[lang] ?? "en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
 
 const formatBytes = (bytes?: number) => {
   if (!bytes && bytes !== 0) return "";
@@ -20,9 +23,9 @@ const formatBytes = (bytes?: number) => {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
 
-const autoReplies = [
-  "โอเคเลย! 👍", "เดี๋ยวคุยกันต่อนะ 😊", "ฮะๆ จริงป่ะ 😆", "เห็นด้วยเลย",
-  "แล้วจะส่งให้นะ ✨", "น่าสนใจมาก เล่าต่อสิ", "ขอเวลาคิดแป๊บนึง 🤔", "เยี่ยมเลย! 💙",
+const REPLY_KEYS = [
+  "convo.reply.0", "convo.reply.1", "convo.reply.2", "convo.reply.3",
+  "convo.reply.4", "convo.reply.5", "convo.reply.6", "convo.reply.7",
 ];
 
 type AttachKind = "image" | "video" | "file";
