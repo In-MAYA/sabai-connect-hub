@@ -283,10 +283,10 @@ export default function Conversation() {
             </div>
             <h3 className="font-display font-bold text-base">{chat.user.name}</h3>
             <p className="text-xs text-muted-foreground mt-1">
-              สร้างกลุ่มแล้ว · {chat.members} สมาชิก
+              {t("convo.groupCreatedMembers", { n: chat.members ?? 0 })}
             </p>
             <p className="text-xs text-muted-foreground mt-3 max-w-[240px]">
-              ส่งข้อความแรกเพื่อเริ่มสนทนา 👋
+              {t("convo.firstMessage")}
             </p>
           </div>
         )}
