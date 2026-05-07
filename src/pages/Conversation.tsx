@@ -247,16 +247,16 @@ export default function Conversation() {
                     <span className="h-1 w-1 rounded-full bg-primary animate-typing" style={{ animationDelay: "150ms" }} />
                     <span className="h-1 w-1 rounded-full bg-primary animate-typing" style={{ animationDelay: "300ms" }} />
                   </span>
-                  กำลังพิมพ์...
+                  {t("convo.typing")}
                 </span>
               ) : chat.isGroup ? (
-                <span className="text-muted-foreground">{chat.members ?? 0} สมาชิก</span>
+                <span className="text-muted-foreground">{t("convo.members", { n: chat.members ?? 0 })}</span>
               ) : chat.user.online ? (
                 <span className="text-success flex items-center gap-1">
-                  <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />ออนไลน์
+                  <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />{t("convo.online")}
                 </span>
               ) : (
-                <span className="text-muted-foreground">ออนไลน์ล่าสุด 2 ชม.</span>
+                <span className="text-muted-foreground">{t("convo.lastSeen")}</span>
               )}
             </p>
           </div>
