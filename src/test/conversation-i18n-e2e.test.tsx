@@ -35,7 +35,10 @@ function renderConvo(initialLang: Lang = "lo") {
 beforeEach(() => {
   localStorage.clear();
   document.documentElement.lang = "";
-  vi.useFakeTimers();
+  // jsdom does not implement Element.scrollTo — stub it for the auto-scroll effect.
+  if (!(Element.prototype as unknown as { scrollTo?: () => void }).scrollTo) {
+    (Element.prototype as unknown as { scrollTo: () => void }).scrollTo = () => {};
+  }
 });
 
 describe("/chat/:id — i18n hot-swap", () => {
