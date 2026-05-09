@@ -81,6 +81,9 @@ describe("/chat/:id — i18n hot-swap", () => {
 
   it("send button aria-label switches language without remount", async () => {
     renderConvo("lo");
+    // Send button only renders when there's a non-empty draft.
+    const input = screen.getByPlaceholderText("ພິມຂໍ້ຄວາມ...") as HTMLInputElement;
+    fireEvent.change(input, { target: { value: "ສະບາຍດີ" } });
     expect(screen.getByLabelText("ສົ່ງຂໍ້ຄວາມ")).toBeInTheDocument();
     await act(async () => setLangRef("en"));
     expect(screen.getByLabelText(/Send message/i)).toBeInTheDocument();
