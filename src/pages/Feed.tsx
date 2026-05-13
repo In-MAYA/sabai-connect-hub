@@ -129,13 +129,14 @@ export default function Feed() {
               </button>
 
               <button
-                onClick={() => toast(t("feed.toast.comments"))}
+                onClick={() => setCommentsFor(p.id)}
+                aria-label={t("comments.title")}
                 className="flex flex-col items-center gap-1 text-white"
               >
                 <div className="h-12 w-12 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center">
                   <MessageCircle className="h-6 w-6" />
                 </div>
-                <span className="text-xs font-bold drop-shadow">{formatN(p.comments)}</span>
+                <span className="text-xs font-bold drop-shadow">{formatN(p.comments + (commentDelta[p.id] ?? 0))}</span>
               </button>
 
               <button
