@@ -54,8 +54,8 @@ export default function Feed() {
       <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[440px] z-30 safe-top">
         <div className="flex items-center justify-between px-4 h-14">
           <button
-            onClick={() => toast(t("feed.toast.search"))}
-            aria-label={t("feed.toast.search")}
+            onClick={() => setSearchOpen(true)}
+            aria-label={t("search.title")}
             className="h-10 w-10 rounded-full bg-white/10 backdrop-blur-md text-white flex items-center justify-center active:scale-95 transition-transform"
           >
             <Search className="h-5 w-5" />
