@@ -24,6 +24,9 @@ export default function Feed() {
   );
   const [saved, setSaved] = useState<Record<string, boolean>>({});
   const [followed, setFollowed] = useState<Record<string, boolean>>({});
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [commentsFor, setCommentsFor] = useState<string | null>(null);
+  const [commentDelta, setCommentDelta] = useState<Record<string, number>>({});
 
   const toggleLike = (id: string) =>
     setLiked((l) => ({ ...l, [id]: !l[id] }));
