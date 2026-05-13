@@ -6,6 +6,8 @@ import { Heart, MessageCircle, Share2, Music2, Search, Plus, Bookmark } from "lu
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { SectionErrorBoundary } from "@/components/SectionErrorBoundary";
+import { SearchSheet } from "@/components/SearchSheet";
+import { CommentsSheet } from "@/components/CommentsSheet";
 
 function formatN(n: number) {
   if (n >= 1000) return (n / 1000).toFixed(1).replace(".0", "") + "K";
@@ -22,6 +24,9 @@ export default function Feed() {
   );
   const [saved, setSaved] = useState<Record<string, boolean>>({});
   const [followed, setFollowed] = useState<Record<string, boolean>>({});
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [commentsFor, setCommentsFor] = useState<string | null>(null);
+  const [commentDelta, setCommentDelta] = useState<Record<string, number>>({});
 
   const toggleLike = (id: string) =>
     setLiked((l) => ({ ...l, [id]: !l[id] }));
@@ -49,8 +54,8 @@ export default function Feed() {
       <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[440px] z-30 safe-top">
         <div className="flex items-center justify-between px-4 h-14">
           <button
-            onClick={() => toast(t("feed.toast.search"))}
-            aria-label={t("feed.toast.search")}
+            onClick={() => setSearchOpen(true)}
+            aria-label={t("search.title")}
             className="h-10 w-10 rounded-full bg-white/10 backdrop-blur-md text-white flex items-center justify-center active:scale-95 transition-transform"
           >
             <Search className="h-5 w-5" />
@@ -124,13 +129,14 @@ export default function Feed() {
               </button>
 
               <button
-                onClick={() => toast(t("feed.toast.comments"))}
+                onClick={() => setCommentsFor(p.id)}
+                aria-label={t("comments.title")}
                 className="flex flex-col items-center gap-1 text-white"
               >
                 <div className="h-12 w-12 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center">
                   <MessageCircle className="h-6 w-6" />
                 </div>
-                <span className="text-xs font-bold drop-shadow">{formatN(p.comments)}</span>
+                <span className="text-xs font-bold drop-shadow">{formatN(p.comments + (commentDelta[p.id] ?? 0))}</span>
               </button>
 
               <button
@@ -188,6 +194,16 @@ export default function Feed() {
         })}
       </div>
       </SectionErrorBoundary>
+
+      <SearchSheet open={searchOpen} onOpenChange={setSearchOpen} />
+      <CommentsSheet
+        postId={commentsFor}
+        open={commentsFor !== null}
+        onOpenChange={(v) => !v && setCommentsFor(null)}
+        onCountChange={(id, delta) =>
+          setCommentDelta((d) => ({ ...d, [id]: (d[id] ?? 0) + delta }))
+        }
+      />
     </div>
   );
 }
