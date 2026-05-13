@@ -194,6 +194,16 @@ export default function Feed() {
         })}
       </div>
       </SectionErrorBoundary>
+
+      <SearchSheet open={searchOpen} onOpenChange={setSearchOpen} />
+      <CommentsSheet
+        postId={commentsFor}
+        open={commentsFor !== null}
+        onOpenChange={(v) => !v && setCommentsFor(null)}
+        onCountChange={(id, delta) =>
+          setCommentDelta((d) => ({ ...d, [id]: (d[id] ?? 0) + delta }))
+        }
+      />
     </div>
   );
 }
