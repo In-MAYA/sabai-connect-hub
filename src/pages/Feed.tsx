@@ -6,6 +6,8 @@ import { Heart, MessageCircle, Share2, Music2, Search, Plus, Bookmark } from "lu
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import { SectionErrorBoundary } from "@/components/SectionErrorBoundary";
+import { SearchSheet } from "@/components/SearchSheet";
+import { CommentsSheet } from "@/components/CommentsSheet";
 
 function formatN(n: number) {
   if (n >= 1000) return (n / 1000).toFixed(1).replace(".0", "") + "K";
