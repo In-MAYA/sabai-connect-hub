@@ -151,7 +151,14 @@ export default function Feed() {
               </button>
 
               <button
-                onClick={() => toast(t("feed.toast.share"))}
+                onClick={async () => {
+                  const url = `${window.location.origin}/feed#${p.id}`;
+                  try {
+                    if (navigator.share) await navigator.share({ title: p.caption, url });
+                    else if (navigator.clipboard) await navigator.clipboard.writeText(url);
+                    toast.success(t("feed.shared"));
+                  } catch { /* cancelled */ }
+                }}
                 className="flex flex-col items-center gap-1 text-white"
               >
                 <div className="h-12 w-12 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center">

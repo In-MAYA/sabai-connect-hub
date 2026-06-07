@@ -1,7 +1,9 @@
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 import { PageHeader } from "@/components/PageHeader";
 import { products } from "@/lib/mock-data";
-import { Search, ShoppingCart, Heart, Star, Flame } from "lucide-react";
+import { Search, ShoppingCart, Heart, Star, Flame, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
@@ -9,6 +11,12 @@ import { SectionErrorBoundary } from "@/components/SectionErrorBoundary";
 
 export default function Shop() {
   const { t } = useI18n();
+  const [q, setQ] = useState("");
+  const [cat, setCat] = useState(0);
+  const [liked, setLiked] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(products.map((p) => [p.id, !!p.liked])),
+  );
+
   const categories = [
     t("shop.cat.all"),
     t("shop.cat.hot"),
@@ -18,6 +26,35 @@ export default function Shop() {
     t("shop.cat.travel"),
     t("shop.cat.collect"),
   ];
+
+  const filtered = useMemo(() => {
+    const query = q.trim().toLowerCase();
+    return products.filter((p) => {
+      if (cat === 1 && p.sold < 1000) return false;
+      if (!query) return true;
+      const localized = (() => {
+        const k = `product.title.${p.id}`;
+        const v = t(k);
+        return v === k ? p.title : v;
+      })();
+      return (
+        p.title.toLowerCase().includes(query) ||
+        localized.toLowerCase().includes(query) ||
+        p.shop.toLowerCase().includes(query)
+      );
+    });
+  }, [q, cat, t]);
+
+  const toggleLike = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setLiked((prev) => {
+      const next = !prev[id];
+      toast.success(t(next ? "product.liked" : "product.unliked"));
+      return { ...prev, [id]: next };
+    });
+  };
+
   return (
     <div>
       <PageHeader
@@ -35,7 +72,22 @@ export default function Shop() {
       <div className="px-4 pt-2">
         <div className="flex items-center gap-2 h-11 rounded-2xl bg-muted/70 px-3">
           <Search className="h-4 w-4 text-muted-foreground" />
-          <Input placeholder={t("shop.searchPlaceholder")} className="border-0 bg-transparent p-0 h-auto focus-visible:ring-0 text-sm" />
+          <Input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder={t("shop.searchPlaceholder")}
+            className="border-0 bg-transparent p-0 h-auto focus-visible:ring-0 text-sm"
+          />
+          {q && (
+            <button
+              type="button"
+              onClick={() => setQ("")}
+              aria-label={t("search.clear")}
+              className="h-6 w-6 rounded-full bg-muted-foreground/15 text-muted-foreground flex items-center justify-center"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -44,9 +96,11 @@ export default function Shop() {
           {categories.map((c, i) => (
             <button
               key={c}
+              onClick={() => setCat(i)}
+              aria-pressed={cat === i}
               className={cn(
-                "shrink-0 h-9 px-4 rounded-full text-sm font-semibold transition-smooth",
-                i === 0 ? "bg-gradient-primary text-primary-foreground shadow-soft" : "bg-muted text-foreground hover:bg-muted/70",
+                "shrink-0 h-9 px-4 rounded-full text-sm font-semibold transition-smooth active:scale-95",
+                cat === i ? "bg-gradient-primary text-primary-foreground shadow-soft" : "bg-muted text-foreground hover:bg-muted/70",
               )}
             >
               {c}
@@ -71,13 +125,22 @@ export default function Shop() {
 
       {/* Products grid */}
       <SectionErrorBoundary name="ProductList">
+      {filtered.length === 0 ? (
+        <div className="px-4 mt-10 text-center text-sm text-muted-foreground">{t("shop.noResults")}</div>
+      ) : (
       <div className="px-4 mt-5 grid grid-cols-2 gap-3">
-        {products.map((p) => (
+        {filtered.map((p) => (
           <Link key={p.id} to={`/product/${p.id}`} className="group">
             <div className="relative rounded-2xl overflow-hidden bg-muted aspect-square">
               <img src={p.image} alt={p.title} className="h-full w-full object-cover group-active:scale-95 transition-bounce" />
-              <button className="absolute top-2 right-2 h-8 w-8 rounded-full bg-background/80 backdrop-blur flex items-center justify-center">
-                <Heart className={cn("h-4 w-4", p.liked && "fill-destructive text-destructive")} />
+              <button
+                type="button"
+                onClick={(e) => toggleLike(p.id, e)}
+                aria-pressed={!!liked[p.id]}
+                aria-label={t(liked[p.id] ? "product.unliked" : "product.liked")}
+                className="absolute top-2 right-2 h-8 w-8 rounded-full bg-background/80 backdrop-blur flex items-center justify-center active:scale-90 transition-transform"
+              >
+                <Heart className={cn("h-4 w-4", liked[p.id] && "fill-destructive text-destructive")} />
               </button>
               {p.originalPrice && (
                 <div className="absolute bottom-2 left-2 bg-destructive text-destructive-foreground text-[10px] font-bold px-2 py-0.5 rounded-md">
@@ -102,6 +165,7 @@ export default function Shop() {
           </Link>
         ))}
       </div>
+      )}
       </SectionErrorBoundary>
     </div>
   );
