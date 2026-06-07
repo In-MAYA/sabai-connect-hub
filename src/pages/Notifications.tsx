@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
 import { Avatar } from "@/components/Avatar";
-import { notifications as rawNotifications, type Notification } from "@/lib/mock-data";
+import { notifications as rawNotifications, chats, type Notification } from "@/lib/mock-data";
 import { Heart, MessageCircle, UserPlus, ShoppingBag, Mail, CheckCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
