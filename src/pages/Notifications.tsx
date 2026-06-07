@@ -154,7 +154,7 @@ export default function Notifications() {
               <button
                 key={n.id}
                 type="button"
-                onClick={() => markRead(n.id)}
+                onClick={() => openNotification(n)}
                 className={cn(
                   "w-full text-left flex items-center gap-3 px-3 py-3 rounded-2xl mx-1 transition-smooth active:bg-muted/60",
                   !n.read && "bg-primary/5",
