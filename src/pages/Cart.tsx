@@ -17,11 +17,25 @@ const initial = [
 
 export default function Cart() {
   const { t } = useI18n();
+  const navigate = useNavigate();
   const [items, setItems] = useState(initial);
+  const selectedCount = items.filter((i) => i.selected).length;
   const total = items.filter((i) => i.selected).reduce((s, i) => s + i.price * i.qty, 0);
 
   const update = (id: string, fn: (it: (typeof initial)[number]) => (typeof initial)[number]) =>
     setItems((arr) => arr.map((i) => (i.id === id ? fn(i) : i)));
+
+  const checkout = () => {
+    if (selectedCount === 0) {
+      toast.error(t("cart.selectFirst"));
+      return;
+    }
+    toast.success(t("cart.ordered"), {
+      description: `${selectedCount} · ฿${total.toLocaleString()}`,
+    });
+    setItems((arr) => arr.filter((i) => !i.selected));
+  };
+
 
   return (
     <div>
