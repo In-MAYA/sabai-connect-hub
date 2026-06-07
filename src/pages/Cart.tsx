@@ -42,6 +42,20 @@ export default function Cart() {
       <PageHeader title={t("cart.title")} back subtitle={t("cart.items", { n: items.length })} />
 
       <SectionErrorBoundary name="CartItems">
+      {items.length === 0 ? (
+        <div className="px-4 pt-20 pb-32 text-center">
+          <div className="mx-auto h-16 w-16 rounded-2xl bg-muted flex items-center justify-center text-muted-foreground">
+            <ShoppingBag className="h-7 w-7" />
+          </div>
+          <p className="mt-4 text-sm text-muted-foreground">{t("cart.empty")}</p>
+          <Button
+            onClick={() => navigate("/shop")}
+            className="mt-5 h-11 px-6 rounded-2xl bg-gradient-primary text-sm font-semibold shadow-glow"
+          >
+            {t("shop.title")}
+          </Button>
+        </div>
+      ) : (
       <div className="px-4 pt-3 space-y-3 pb-32">
         {items.map((it) => (
           <div key={it.id} className="bg-card rounded-2xl p-3 border border-border shadow-soft">
@@ -85,17 +99,24 @@ export default function Cart() {
           </div>
         ))}
       </div>
+      )}
       </SectionErrorBoundary>
 
+      {items.length > 0 && (
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[440px] bg-background/95 backdrop-blur-xl border-t border-border px-4 py-3 safe-bottom z-40">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm text-muted-foreground">{t("cart.total")}</span>
           <span className="font-display text-2xl font-extrabold text-primary">฿{total.toLocaleString()}</span>
         </div>
-        <Button className="w-full h-12 rounded-2xl bg-gradient-primary text-base font-semibold shadow-glow">
-          {t("cart.checkout")} ({items.filter((i) => i.selected).length})
+        <Button
+          onClick={checkout}
+          disabled={selectedCount === 0}
+          className="w-full h-12 rounded-2xl bg-gradient-primary text-base font-semibold shadow-glow disabled:opacity-60"
+        >
+          {t("cart.checkout")} ({selectedCount})
         </Button>
       </div>
+      )}
     </div>
   );
 }
