@@ -4,6 +4,7 @@ import { currentUser, posts, products } from "@/lib/mock-data";
 import { Settings, QrCode, Edit3, BadgeCheck, Grid3x3, Store, Bookmark, Wallet, Gift } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n";
 
 export default function Profile() {
