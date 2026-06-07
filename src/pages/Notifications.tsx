@@ -37,9 +37,33 @@ type TabKey = "all" | "like" | "comment" | "follow" | "order";
 
 export default function Notifications() {
   const { t } = useI18n();
+  const navigate = useNavigate();
   const [active, setActive] = useState<TabKey>("all");
   const [items, setItems] = useState<Notification[]>(rawNotifications);
   const [following, setFollowing] = useState<Record<string, boolean>>({});
+
+  const openNotification = (n: Notification) => {
+    markRead(n.id);
+    switch (n.type) {
+      case "message": {
+        const chat = chats.find((c) => c.user.id === n.user.id);
+        navigate(chat ? `/chat/${chat.id}` : "/chats");
+        return;
+      }
+      case "order":
+        navigate("/shop");
+        return;
+      case "follow":
+        navigate("/profile");
+        return;
+      case "like":
+      case "comment":
+      default:
+        navigate("/feed");
+        return;
+    }
+  };
+
 
   const tabs: { key: TabKey; label: string }[] = [
     { key: "all", label: t("notif.tab.all") },
