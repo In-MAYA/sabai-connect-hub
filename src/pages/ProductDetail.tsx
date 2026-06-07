@@ -1,14 +1,53 @@
+import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { products } from "@/lib/mock-data";
+import { toast } from "sonner";
+import { products, chats } from "@/lib/mock-data";
 import { Avatar } from "@/components/Avatar";
 import { ChevronLeft, Heart, Share2, Star, MessageCircle, ShoppingCart, Store, Truck, ShieldCheck } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 
 export default function ProductDetail() {
   const { t } = useI18n();
   const { id } = useParams();
   const navigate = useNavigate();
   const product = products.find((p) => p.id === id) ?? products[0];
+  const [liked, setLiked] = useState(!!product.liked);
+
+  const toggleLike = () => {
+    setLiked((v) => {
+      const next = !v;
+      toast.success(t(next ? "product.liked" : "product.unliked"));
+      return next;
+    });
+  };
+
+  const share = async () => {
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    try {
+      if (typeof navigator !== "undefined" && navigator.share) {
+        await navigator.share({ title: product.title, url });
+      } else if (typeof navigator !== "undefined" && navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+      }
+      toast.success(t("product.shared"));
+    } catch {
+      // user cancelled
+    }
+  };
+
+  const addToCart = () => toast.success(t("product.addedToCart"));
+
+  const buyNow = () => {
+    toast.success(t("product.addedToCart"));
+    navigate("/cart");
+  };
+
+  const openShopChat = () => {
+    const chat = chats.find((c) => c.user.name === product.shop);
+    toast.success(t("product.chatStarted"));
+    navigate(chat ? `/chat/${chat.id}` : "/chats");
+  };
 
   return (
     <div className="min-h-screen bg-background pb-28">
@@ -19,7 +58,7 @@ export default function ProductDetail() {
             <ChevronLeft className="h-5 w-5" />
           </button>
           <div className="flex items-center gap-2">
-            <button className="h-10 w-10 rounded-full bg-background/80 backdrop-blur-md flex items-center justify-center shadow-soft">
+            <button onClick={share} aria-label={t("product.shared")} className="h-10 w-10 rounded-full bg-background/80 backdrop-blur-md flex items-center justify-center shadow-soft active:scale-95 transition-transform">
               <Share2 className="h-4 w-4" />
             </button>
             <Link to="/cart" className="h-10 w-10 rounded-full bg-background/80 backdrop-blur-md flex items-center justify-center shadow-soft">
@@ -67,7 +106,12 @@ export default function ProductDetail() {
           </div>
           <p className="text-xs text-muted-foreground flex items-center gap-1"><Store className="h-3 w-3" /> {t("product.popularShop")}</p>
         </div>
-        <button className="h-9 px-4 rounded-full border-2 border-primary text-primary text-xs font-bold">{t("product.visitShop")}</button>
+        <button
+          onClick={() => navigate("/shop")}
+          className="h-9 px-4 rounded-full border-2 border-primary text-primary text-xs font-bold active:scale-95 transition-transform"
+        >
+          {t("product.visitShop")}
+        </button>
       </div>
 
       {/* Benefits */}
@@ -99,18 +143,31 @@ export default function ProductDetail() {
       {/* Bottom action bar */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[440px] bg-background/95 backdrop-blur-xl border-t border-border px-3 py-3 safe-bottom z-40">
         <div className="flex items-center gap-2">
-          <button className="flex flex-col items-center gap-0.5 px-2">
-            <Heart className="h-6 w-6" />
+          <button
+            onClick={toggleLike}
+            aria-pressed={liked}
+            className="flex flex-col items-center gap-0.5 px-2 active:scale-95 transition-transform"
+          >
+            <Heart className={cn("h-6 w-6", liked && "fill-destructive text-destructive")} />
             <span className="text-[10px] font-semibold">{t("product.like")}</span>
           </button>
-          <button className="flex flex-col items-center gap-0.5 px-2">
+          <button
+            onClick={openShopChat}
+            className="flex flex-col items-center gap-0.5 px-2 active:scale-95 transition-transform"
+          >
             <MessageCircle className="h-6 w-6" />
             <span className="text-[10px] font-semibold">{t("product.chat")}</span>
           </button>
-          <button className="flex-1 h-12 rounded-2xl border-2 border-primary text-primary font-bold text-sm">
+          <button
+            onClick={addToCart}
+            className="flex-1 h-12 rounded-2xl border-2 border-primary text-primary font-bold text-sm active:scale-[0.98] transition-transform"
+          >
             {t("product.addCart")}
           </button>
-          <button className="flex-1 h-12 rounded-2xl bg-gradient-primary text-primary-foreground font-bold text-sm shadow-glow">
+          <button
+            onClick={buyNow}
+            className="flex-1 h-12 rounded-2xl bg-gradient-primary text-primary-foreground font-bold text-sm shadow-glow active:scale-[0.98] transition-transform"
+          >
             {t("product.buyNow")}
           </button>
         </div>
