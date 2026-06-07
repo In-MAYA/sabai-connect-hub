@@ -78,12 +78,17 @@ export default function Profile() {
       {/* Quick actions */}
       <div className="px-4 mt-5 grid grid-cols-4 gap-2">
         {[
-          { icon: Wallet, label: t("profile.wallet") },
-          { icon: Store, label: t("profile.myShop") },
-          { icon: Gift, label: t("profile.rewards") },
-          { icon: Bookmark, label: t("profile.saved") },
-        ].map(({ icon: Icon, label }) => (
-          <button key={label} className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-muted/50 hover:bg-muted transition-smooth">
+          { icon: Wallet, label: t("profile.wallet"), onClick: () => toast.info(t("profile.wallet"), { description: "฿1,250.00" }) },
+          { icon: Store, label: t("profile.myShop"), onClick: () => navigate("/shop") },
+          { icon: Gift, label: t("profile.rewards"), onClick: () => toast.info(t("profile.rewards"), { description: "+120 ⭐" }) },
+          { icon: Bookmark, label: t("profile.saved"), onClick: () => setTab("saved") },
+        ].map(({ icon: Icon, label, onClick }) => (
+          <button
+            key={label}
+            type="button"
+            onClick={onClick}
+            className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-muted/50 hover:bg-muted active:scale-95 transition-smooth"
+          >
             <div className="h-10 w-10 rounded-2xl bg-gradient-primary text-primary-foreground flex items-center justify-center shadow-soft">
               <Icon className="h-5 w-5" />
             </div>
