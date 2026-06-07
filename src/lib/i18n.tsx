@@ -239,6 +239,10 @@ const dict: Record<Lang, Dict> = {
     "notif.time.minAgo": "{n} ນາທີຜ່ານມາ",
     "notif.time.hourAgo": "{n} ຊົ່ວໂມງຜ່ານມາ",
     "notif.time.yesterday": "ມື້ວານ",
+    "notif.empty": "ຍັງບໍ່ມີແຈ້ງເຕືອນ",
+    "notif.following": "ກຳລັງຕິດຕາມ",
+    "notif.markAllRead": "ໝາຍວ່າອ່ານທັງໝົດ",
+    "notif.allRead": "ໝາຍວ່າອ່ານທັງໝົດແລ້ວ",
     // Profile
     "profile.title": "ໂປຣໄຟລ໌",
     "profile.edit": "ແກ້ໄຂ",
