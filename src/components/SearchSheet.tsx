@@ -70,6 +70,10 @@ export function SearchSheet({ open, onOpenChange }: { open: boolean; onOpenChang
         side="top"
         className="h-full w-full max-w-[440px] mx-auto p-0 bg-background flex flex-col [&>button]:hidden"
       >
+        <SheetHeader className="sr-only">
+          <SheetTitle>{t("search.title")}</SheetTitle>
+          <SheetDescription>{t("search.placeholder")}</SheetDescription>
+        </SheetHeader>
         <div className="flex items-center gap-2 p-3 border-b border-border safe-top">
           <div className="relative flex-1">
             <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
