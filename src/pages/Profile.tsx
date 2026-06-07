@@ -21,10 +21,16 @@ export default function Profile() {
         title={t("profile.title")}
         right={
           <>
-            <button className="h-10 w-10 rounded-full hover:bg-muted flex items-center justify-center">
+            <button
+              type="button"
+              onClick={() => toast.info(t("profile.qr"), { description: currentUser.username })}
+              aria-label={t("profile.qr")}
+              className="h-10 w-10 rounded-full hover:bg-muted flex items-center justify-center"
+            >
               <QrCode className="h-5 w-5" />
             </button>
             <button
+              type="button"
               onClick={() => navigate("/settings")}
               aria-label={t("settings.title")}
               className="h-10 w-10 rounded-full hover:bg-muted flex items-center justify-center"
