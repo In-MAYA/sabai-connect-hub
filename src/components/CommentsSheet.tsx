@@ -123,6 +123,10 @@ export function CommentsSheet({
         side="bottom"
         className="h-[80vh] w-full max-w-[440px] mx-auto p-0 bg-background flex flex-col rounded-t-2xl [&>button]:hidden"
       >
+        <SheetHeader className="sr-only">
+          <SheetTitle>{t("comments.title")}</SheetTitle>
+          <SheetDescription>{t("comments.placeholder")}</SheetDescription>
+        </SheetHeader>
         <div className="relative px-4 py-3 border-b border-border">
           <div className="absolute top-1.5 left-1/2 -translate-x-1/2 h-1 w-10 rounded-full bg-muted" />
           <h2 className="text-center text-sm font-bold mt-1">
