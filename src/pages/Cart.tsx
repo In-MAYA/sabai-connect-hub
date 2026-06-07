@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { PageHeader } from "@/components/PageHeader";
 import { products } from "@/lib/mock-data";
 import { Avatar } from "@/components/Avatar";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n";
 import { SectionErrorBoundary } from "@/components/SectionErrorBoundary";
