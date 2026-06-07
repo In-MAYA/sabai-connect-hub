@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
 import { Avatar } from "@/components/Avatar";
-import { notifications as rawNotifications, type Notification } from "@/lib/mock-data";
+import { notifications as rawNotifications, chats, type Notification } from "@/lib/mock-data";
 import { Heart, MessageCircle, UserPlus, ShoppingBag, Mail, CheckCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
@@ -36,9 +37,33 @@ type TabKey = "all" | "like" | "comment" | "follow" | "order";
 
 export default function Notifications() {
   const { t } = useI18n();
+  const navigate = useNavigate();
   const [active, setActive] = useState<TabKey>("all");
   const [items, setItems] = useState<Notification[]>(rawNotifications);
   const [following, setFollowing] = useState<Record<string, boolean>>({});
+
+  const openNotification = (n: Notification) => {
+    markRead(n.id);
+    switch (n.type) {
+      case "message": {
+        const chat = chats.find((c) => c.user.id === n.user.id);
+        navigate(chat ? `/chat/${chat.id}` : "/chats");
+        return;
+      }
+      case "order":
+        navigate("/shop");
+        return;
+      case "follow":
+        navigate("/profile");
+        return;
+      case "like":
+      case "comment":
+      default:
+        navigate("/feed");
+        return;
+    }
+  };
+
 
   const tabs: { key: TabKey; label: string }[] = [
     { key: "all", label: t("notif.tab.all") },
@@ -129,7 +154,7 @@ export default function Notifications() {
               <button
                 key={n.id}
                 type="button"
-                onClick={() => markRead(n.id)}
+                onClick={() => openNotification(n)}
                 className={cn(
                   "w-full text-left flex items-center gap-3 px-3 py-3 rounded-2xl mx-1 transition-smooth active:bg-muted/60",
                   !n.read && "bg-primary/5",
