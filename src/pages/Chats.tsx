@@ -1,14 +1,33 @@
-import { Link } from "react-router-dom";
+import { useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { PageHeader } from "@/components/PageHeader";
 import { Avatar } from "@/components/Avatar";
 import { chats, stories } from "@/lib/mock-data";
-import { Search, Edit3, Pin, CheckCheck, Plus, UserPlus } from "lucide-react";
+import { Search, Edit3, Pin, CheckCheck, Plus, UserPlus, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useI18n } from "@/lib/i18n";
 import { SectionErrorBoundary } from "@/components/SectionErrorBoundary";
 
 export default function Chats() {
   const { t } = useI18n();
+  const navigate = useNavigate();
+  const [q, setQ] = useState("");
+
+  const filteredChats = useMemo(() => {
+    const query = q.trim().toLowerCase();
+    if (!query) return chats;
+    return chats.filter((c) => {
+      const name = c.isGroup ? t("chats.group.team") : c.user.name;
+      const lastKey = `chats.last.${c.id}`;
+      const last = t(lastKey) === lastKey ? c.lastMessage : t(lastKey);
+      return (
+        name.toLowerCase().includes(query) ||
+        c.user.name.toLowerCase().includes(query) ||
+        last.toLowerCase().includes(query)
+      );
+    });
+  }, [q, t]);
+
   return (
     <div>
       <PageHeader
@@ -23,7 +42,12 @@ export default function Chats() {
             >
               <UserPlus className="h-5 w-5" />
             </Link>
-            <button className="h-10 w-10 rounded-full bg-gradient-primary text-primary-foreground flex items-center justify-center shadow-glow">
+            <button
+              type="button"
+              onClick={() => navigate("/contacts")}
+              aria-label={t("chats.newChat")}
+              className="h-10 w-10 rounded-full bg-gradient-primary text-primary-foreground flex items-center justify-center shadow-glow active:scale-95 transition-transform"
+            >
               <Edit3 className="h-4 w-4" />
             </button>
           </>
@@ -34,9 +58,25 @@ export default function Chats() {
       <div className="px-4 pt-2">
         <div className="flex items-center gap-2 h-11 rounded-2xl bg-muted/70 px-3">
           <Search className="h-4 w-4 text-muted-foreground" />
-          <Input placeholder={t("chats.searchPlaceholder")} className="border-0 bg-transparent p-0 h-auto focus-visible:ring-0 text-sm" />
+          <Input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder={t("chats.searchPlaceholder")}
+            className="border-0 bg-transparent p-0 h-auto focus-visible:ring-0 text-sm"
+          />
+          {q && (
+            <button
+              type="button"
+              onClick={() => setQ("")}
+              aria-label={t("search.clear")}
+              className="h-6 w-6 rounded-full bg-muted-foreground/15 text-muted-foreground flex items-center justify-center"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
       </div>
+
 
       {/* Stories */}
       <div className="mt-4 overflow-x-auto no-scrollbar">
