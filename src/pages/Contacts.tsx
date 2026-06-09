@@ -28,6 +28,7 @@ import {
   type DeviceContact,
   type RegisteredContact,
 } from "@/lib/contacts";
+import { chats as chatsStore, type Chat } from "@/lib/mock-data";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -128,10 +129,29 @@ export default function Contacts() {
   const createGroup = () => {
     const name = groupName.trim() || t("contacts.newGroup");
     const memberIds = Array.from(selected);
+    const groupId = "g-" + Date.now().toString(36);
+    // Persist the new group in the shared chat list so it appears in /chats
+    const newChat: Chat = {
+      id: groupId,
+      user: {
+        id: groupId,
+        name,
+        username: "group",
+        avatar: "from-violet-500 to-fuchsia-500",
+      },
+      lastMessage: "",
+      time: "",
+      unread: 0,
+      isGroup: true,
+      members: memberIds.length + 1,
+    };
+    // Avoid duplicates if re-run
+    if (!chatsStore.some((c) => c.id === groupId)) {
+      chatsStore.unshift(newChat);
+    }
     toast.success(
       t("contacts.groupCreated", { name, n: memberIds.length }),
     );
-    const groupId = "g-" + Date.now().toString(36);
     setStage("browse");
     setSelected(new Set());
     setGroupName("");
