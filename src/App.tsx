@@ -18,6 +18,7 @@ import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Notifications from "./pages/Notifications";
 import Profile from "./pages/Profile";
+import Wallet from "./pages/Wallet";
 import Settings from "./pages/Settings";
 import Call from "./pages/Call";
 import NotFound from "./pages/NotFound";
@@ -68,6 +69,7 @@ const App = () => (
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/wallet" element={<Wallet />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/call/:type" element={<Call />} />
                 <Route path="*" element={<NotFound />} />

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { Avatar } from "@/components/Avatar";
 import { posts } from "@/lib/mock-data";
@@ -27,6 +28,19 @@ export default function Feed() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [commentsFor, setCommentsFor] = useState<string | null>(null);
   const [commentDelta, setCommentDelta] = useState<Record<string, number>>({});
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Open the comments sheet when navigated with ?comments=<postId>
+  useEffect(() => {
+    const cid = searchParams.get("comments");
+    if (cid && posts.some((p) => p.id === cid)) {
+      setCommentsFor(cid);
+      // Clean the URL so re-renders/back-nav don't reopen unexpectedly
+      const next = new URLSearchParams(searchParams);
+      next.delete("comments");
+      setSearchParams(next, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   const toggleLike = (id: string) =>
     setLiked((l) => ({ ...l, [id]: !l[id] }));

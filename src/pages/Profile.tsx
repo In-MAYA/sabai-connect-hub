@@ -78,7 +78,7 @@ export default function Profile() {
       {/* Quick actions */}
       <div className="px-4 mt-5 grid grid-cols-4 gap-2">
         {[
-          { icon: Wallet, label: t("profile.wallet"), onClick: () => toast.info(t("profile.wallet"), { description: "฿1,250.00" }) },
+          { icon: Wallet, label: t("profile.wallet"), onClick: () => navigate("/wallet") },
           { icon: Store, label: t("profile.myShop"), onClick: () => navigate("/shop") },
           { icon: Gift, label: t("profile.rewards"), onClick: () => toast.info(t("profile.rewards"), { description: "+120 ⭐" }) },
           { icon: Bookmark, label: t("profile.saved"), onClick: () => setTab("saved") },

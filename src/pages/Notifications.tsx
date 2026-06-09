@@ -42,6 +42,13 @@ export default function Notifications() {
   const [items, setItems] = useState<Notification[]>(rawNotifications);
   const [following, setFollowing] = useState<Record<string, boolean>>({});
 
+  // Map a notification to the related post (for like/comment deep-links)
+  const postIdByNotif: Record<string, string> = {
+    n1: "p1",
+    n2: "p1",
+    n6: "p2",
+  };
+
   const openNotification = (n: Notification) => {
     markRead(n.id);
     switch (n.type) {
@@ -56,11 +63,17 @@ export default function Notifications() {
       case "follow":
         navigate("/profile");
         return;
-      case "like":
-      case "comment":
-      default:
-        navigate("/feed");
+      case "comment": {
+        const pid = postIdByNotif[n.id] ?? "p1";
+        navigate(`/feed?comments=${pid}`);
         return;
+      }
+      case "like":
+      default: {
+        const pid = postIdByNotif[n.id] ?? "p1";
+        navigate(`/feed?post=${pid}`);
+        return;
+      }
     }
   };
 
