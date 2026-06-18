@@ -436,8 +436,25 @@ export default function Contacts() {
             filteredReg.map((c) => {
               const isSelected = selected.has(c.id);
               const onRowClick = () => {
-                if (inSelect) toggle(c.id);
-                else navigate(`/chat/${c.user.id}`);
+                if (inSelect) {
+                  toggle(c.id);
+                  return;
+                }
+                // Resolve to an existing chat for this user, else create one
+                const existing = chatsStore.find((ch) => !ch.isGroup && ch.user.id === c.user.id);
+                if (existing) {
+                  navigate(`/chat/${existing.id}`);
+                  return;
+                }
+                const newId = `c-${c.user.id}-${Date.now().toString(36)}`;
+                chatsStore.unshift({
+                  id: newId,
+                  user: c.user,
+                  lastMessage: "",
+                  time: "",
+                  unread: 0,
+                });
+                navigate(`/chat/${newId}`);
               };
               return (
                 <div
